@@ -393,3 +393,953 @@
 
         <!-- TAB 2: ප්‍රතිඵල විශ්ලේෂණය -->
         <div id="tab-analysis" class="tab-content">
+            <div class="dashboard">
+                <div class="card" id="analysisReportCard">
+                    <div id="analysisPrintHeader">
+                        <h2 class="dynamic-school-name">මගේ පාසල</h2>
+                        <h4>ශිෂ්‍ය ප්‍රතිඵල ලේඛනය (Master Sheet)</h4>
+                        <h4 id="analysisPrintSubHeader" style="font-weight: bold; color: #000;"></h4>
+                        <hr>
+                    </div>
+                    <h3 class="section-title" style="border: none; padding: 0;">විභාග ප්‍රතිඵල විශ්ලේෂණය</h3>
+                    <div class="table-filters">
+                        <select id="analysisTermSelect" onchange="updateAnalysisTable()">
+                            <option value="පළමු වාරය" selected>පළමු වාරය</option><option value="දෙවන වාරය">දෙවන වාරය</option><option value="තෙවන වාරය">තෙවන වාරය</option>
+                        </select>
+                        <select id="analysisGradeSelect" onchange="updateAnalysisTable()">
+                            <option value="6">6 ශ්‍රේණිය</option><option value="7">7 ශ්‍රේණිය</option><option value="8">8 ශ්‍රේණිය</option>
+                            <option value="9">9 ශ්‍රේණිය</option><option value="10">10 ශ්‍රේණිය</option><option value="11" selected>11 ශ්‍රේණිය</option>
+                        </select>
+                    </div>
+                    <div class="action-buttons" id="analysisActionButtons">
+                        <button onclick="window.print()" class="btn-print">🖨️ Print Master Sheet</button>
+                        <button onclick="downloadAnalysisPDF()" class="btn-pdf">📄 Download PDF</button>
+                    </div>
+                    <div class="table-responsive" id="analysisTableResponsiveContainer">
+                        <table id="analysisDataTable"><thead><tr id="analysisTableHeadRow"></tr></thead><tbody id="analysisTableBody"></tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ශිෂ්‍ය ලියාපදිංචිය -->
+        <div id="tab-students" class="tab-content">
+            <div class="dashboard">
+                <div class="card" id="regStudentFormCard">
+                    <h3 class="section-title">නව ශිෂ්‍ය තොරතුරු ඇතුළත් කරන්න</h3>
+                    <form id="studentRegForm">
+                        <input type="text" id="reg_admNo" placeholder="ඇතුළත්වීමේ අංකය (Admission No)" required>
+                        <input type="text" id="reg_fullName" placeholder="සම්පූර්ණ නම (Full Name)" required style="text-align: left; padding-left: 20px;">
+                        <input type="text" id="reg_initialName" placeholder="මුලකුරු සමග නම (Name with Initials)" required style="text-align: left; padding-left: 20px;">
+                        <select id="reg_grade" required>
+                            <option value="" disabled selected>ශ්‍රේණිය තෝරන්න (Grade)</option>
+                            <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                            <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+                        </select>
+                        <div class="flex-row">
+                            <select id="reg_gender" required><option value="" disabled selected>ස්ත්‍රී/පුරුෂ</option><option value="පිරිමි">පිරිමි</option><option value="ගැහැණු">ගැහැණු</option></select>
+                            <input type="text" id="reg_dob" placeholder="උපන් දිනය (YYYY-MM-DD)" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" required>
+                            <select id="reg_scholarship" required><option value="" disabled selected>ශිෂ්‍යත්ව ලාභියෙක් ද?</option><option value="ඔව්">ඔව්</option><option value="නැත">නැත</option></select>
+                        </div>
+                        <input type="text" id="reg_address" placeholder="ලිපිනය (Address)" style="text-align: left; padding-left: 20px;" required>
+                        <input type="tel" id="reg_phone" placeholder="භාරකරුගේ දුරකථන අංකය (10 digits)" required>
+                        <div class="flex-row" style="margin-top: 20px;">
+                            <button type="submit" id="studentSubmitBtn" class="btn-submit" style="flex: 2; margin-top: 0; background: linear-gradient(to right, #10b981, #059669);">ශිෂ්‍යයා ලියාපදිංචි/වෙනස් කරන්න</button>
+                            <button type="reset" class="btn-clear" style="flex: 1; margin-top: 0; padding: 16px; border-radius: 10px; font-weight: bold;" onclick="resetStudentForm()">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">ලියාපදිංචි සිසුන්ගේ නාමලේඛනය</h3>
+                    <div class="table-filters">
+                        <select id="filterRegGrade" onchange="renderStudentsTable()" style="max-width: 300px;">
+                            <option value="all">සියලුම ශ්‍රේණි</option>
+                            <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                            <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive" style="margin-top: 15px;">
+                        <table id="studentsRegTable">
+                            <thead><tr><th>අංකය</th><th style="text-align:left;">නම</th><th>ස්ත්‍රී/පුරුෂ</th><th>ශ්‍රේණිය</th><th>උපන් දිනය</th><th>ශිෂ්‍යත්වය</th><th>දුරකථන</th><th>Action</th></tr></thead>
+                            <tbody id="studentsRegTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ගුරු ලියාපදිංචිය -->
+        <div id="tab-teachers" class="tab-content">
+            <div class="dashboard">
+                <div class="card" id="regTeacherFormCard">
+                    <h3 class="section-title">නව ගුරු තොරතුරු ඇතුළත් කරන්න</h3>
+                    <form id="teacherRegForm">
+                        <input type="text" id="treg_id" placeholder="ගුරු හැඳුනුම් අංකය (Teacher ID)">
+                        <input type="text" id="treg_name" placeholder="නම (Name)" style="text-align: left; padding-left: 20px;">
+                        <input type="text" id="treg_nic" placeholder="ජාතික හැඳුනුම්පත් අංකය (NIC)" style="text-align: left; padding-left: 20px;">
+                        <input type="text" id="treg_address" placeholder="ලිපිනය (Address)" style="text-align: left; padding-left: 20px;">
+                        <div class="flex-row">
+                            <input type="text" id="treg_qualifications" placeholder="සුදුසුකම්" style="text-align: left; padding-left: 20px;">
+                            <input type="text" id="treg_salary_no" placeholder="වැටුප් අංකය" style="text-align: left; padding-left: 20px;">
+                        </div>
+                        <div class="flex-row">
+                            <select id="treg_class">
+                                <option value="නැත" selected>පන්තිභාර: නැත</option>
+                                <option value="6">6 ශ්‍රේණිය</option><option value="7">7 ශ්‍රේණිය</option><option value="8">8 ශ්‍රේණිය</option>
+                                <option value="9">9 ශ්‍රේණිය</option><option value="10">10 ශ්‍රේණිය</option><option value="11">11 ශ්‍රේණිය</option>
+                            </select>
+                            <div class="custom-dropdown" id="teacherSubjectDropdown">
+                                <div class="dropdown-header" onclick="toggleTeacherSubjectDropdown()">
+                                    <span id="teacherSubjectText" style="color: var(--text-main); font-weight: normal;">විෂයයන් තෝරන්න</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="dropdown-list" id="teacherSubjectList" style="display:none; padding: 10px;">
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="සිංහල" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> සිංහල</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="දෙමළ" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> දෙමළ</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="ආගම" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> ආගම</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="ගණිතය" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> ගණිතය</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="විද්‍යාව" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> විද්‍යාව</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="ඉංග්‍රීසි" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> ඉංග්‍රීසි</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="ඉතිහාසය" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> ඉතිහාසය</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="භූගෝල විද්‍යාව" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> භූගෝල විද්‍යාව</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="පුරවැසි අධ්‍යාපනය" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> පුරවැසි අධ්‍යාපනය</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="සෞඛ්‍යය" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> සෞඛ්‍යය</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="ICT" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> ICT</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="චිත්‍ර" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> චිත්‍ර</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="නැටුම්" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> නැටුම්</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="සංගීතය" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> සංගීතය</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="PTS" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> PTS</label>
+                                    <label style="display:flex; padding:6px;"><input type="checkbox" value="කෘෂි හා ආහාර තාක්ෂණය" onchange="updateTeacherSubjects()" style="width:auto; margin-right:10px;"> කෘෂි හා ආහාර තාක්ෂණය</label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="treg_subjects_hidden">
+                        </div>
+                        <div class="flex-row">
+                            <input type="text" id="treg_appoint_date" placeholder="පත්වීමේ දිනය" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')">
+                            <input type="text" id="treg_school_appoint_date" placeholder="මෙම පාසලට පත්වූ දිනය" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')">
+                            <input type="text" id="treg_timetable_date" placeholder="වාරසටහන් අනුමත දිනය" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')">
+                        </div>
+                        <input type="tel" id="treg_phone" placeholder="දුරකථන අංකය (10 digits)">
+                        <div class="flex-row" style="margin-top: 20px;">
+                            <button type="submit" id="teacherSubmitBtn" class="btn-submit" style="flex: 2; margin-top: 0; background: linear-gradient(to right, #8b5cf6, #6d28d9);">ගුරුවරයා ලියාපදිංචි/වෙනස් කරන්න</button>
+                            <button type="reset" class="btn-clear" style="flex: 1; margin-top: 0; padding: 16px; border-radius: 10px; font-weight: bold;" onclick="resetTeacherForm()">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">ගුරු මණ්ඩලය</h3>
+                    <div class="table-responsive">
+                        <table id="teachersRegTable">
+                            <thead><tr><th>ID</th><th style="text-align:left;">නම</th><th>පන්තිභාර</th><th>විෂයයන්</th><th>දුරකථන</th><th>Action</th></tr></thead>
+                            <tbody id="teachersRegTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: පාසල් සැකසුම් (Settings & Google Sheet Link) -->
+        <div id="tab-settings" class="tab-content">
+            <div class="dashboard">
+                <div class="card">
+                    <h3 class="section-title">⚙️ පාසල් සැකසුම් සහ Google Sheet Backup</h3>
+                    <label style="font-weight:bold; font-size:14px;">පාසලේ නම (School Name):</label>
+                    <input type="text" id="settingSchoolName" placeholder="උදා: මො/හෙළගම කනිටු විදුහල" style="text-align:left; padding-left:15px;">
+                    <button class="btn-submit" onclick="saveSchoolSettings()" style="margin-top:10px;">💾 පාසලේ නම සුරකින්න (Save Name)</button>
+
+                    <hr style="border: 1px solid var(--border-main); margin: 25px 0;">
+                    <h4 style="margin-top:0;">📊 ඔබේ Google Sheet Database එක</h4>
+                    <p style="font-size:14px; color:var(--text-muted);">ඔබ ඇතුළත් කරන සියලුම දත්ත ස්වයංක්‍රීයව ඔබේ Google Drive හි <b>Marks_Analyzer_DB</b> නම් Google Sheet එකේ Save වේ.</p>
+                    <button class="btn-login" style="background: #10b981;" onclick="openMyGoogleSheet()">📂 Google Sheet එක විවෘත කරන්න</button>
+
+                    <hr style="border: 1px solid var(--border-main); margin: 25px 0;">
+                    <h4 style="margin-top:0;">🎓 ශිෂ්‍ය ප්‍රතිඵල පෝටලය (Student Portal Link)</h4>
+                    <p style="font-size:13px; color:var(--text-muted);">ළමයින්ට තමන්ගේ ප්‍රතිඵල බැලීමට නම්, ඉහත බොත්තමෙන් Google Sheet එක විවෘත කර <b>Share -> General Access -> Anyone with the link (Viewer)</b> ලෙස සකසා පහත Link එක ළමයින්ට ලබා දෙන්න:</p>
+                    <input type="text" id="studentPortalLinkBox" readonly style="font-size:13px; color:var(--text-brand); font-weight:bold;">
+                    <button class="btn-login" style="background: #3b82f6; margin-top:5px;" onclick="copyPortalLink()">📋 Student Portal Link එක Copy කරන්න</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="dev-footer">
+            &copy; 2026 | Kelum Konara | Smart<span style="color: #10b981; font-weight: bold;">Soft</span>
+        </div>
+    </div>
+
+    <div id="syncStatusBadge" class="hide-print" style="display:none; position:fixed; bottom:12px; right:12px; z-index:9999; padding:8px 14px; border-radius:20px; font-size:12px; font-weight:bold; color:#fff; background:#10b981; box-shadow:0 2px 8px rgba(0,0,0,0.2);">🟢 Google Sheet Ready</div>
+
+    <script>
+        // ============================================================
+        // 1. GOOGLE CLOUD CONFIGURATION (මෙතනට ඔබේ Client ID එක දාන්න)
+        // ============================================================
+        const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID_HERE";
+        const SCOPES = "https://www.googleapis.com/auth/drive.file";
+        const DB_FILE_NAME = "Marks_Analyzer_DB";
+
+        let tokenClient;
+        let accessToken = null;
+        let spreadsheetId = null;
+
+        let schoolName = "මගේ පාසල";
+        let studentsData = [];
+        let registeredStudents = [];
+        let registeredTeachers = [];
+        let myChart = null;
+
+        // ============================================================
+        // 2. INITIALIZATION & THEME
+        // ============================================================
+        function toggleTheme() {
+            let newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons(newTheme);
+            if (myChart) updateChart();
+        }
+
+        function updateThemeIcons(theme) {
+            let icon = theme === 'dark' ? '☀️' : '🌙';
+            if(document.getElementById('themeToggleApp')) document.getElementById('themeToggleApp').innerText = icon;
+            if(document.getElementById('themeToggleLogin')) document.getElementById('themeToggleLogin').innerText = icon;
+        }
+
+        function updateSchoolNameUI(name) {
+            schoolName = name || "මගේ පාසල";
+            document.title = schoolName + " - Marks Analyzer";
+            document.querySelectorAll('.dynamic-school-name').forEach(el => el.innerText = schoolName);
+            let input = document.getElementById('settingSchoolName');
+            if (input) input.value = schoolName;
+        }
+
+        function setSyncStatus(text, color = '#10b981') {
+            let badge = document.getElementById('syncStatusBadge');
+            badge.style.display = 'block';
+            badge.innerText = text;
+            badge.style.backgroundColor = color;
+        }
+
+        window.onload = function() {
+            updateThemeIcons(document.documentElement.getAttribute('data-theme'));
+
+            // Check if opened via Student Portal Link (?sheet=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlSheetId = urlParams.get('sheet');
+            if (urlSheetId) {
+                document.getElementById('portalSheetIdInput').value = urlSheetId;
+                document.getElementById('portalSheetIdBox').style.display = 'none';
+                showStudentPortal();
+                loadPublicSchoolName(urlSheetId);
+            }
+
+            // Initialize Google API Client
+            if (typeof gapi !== 'undefined') {
+                gapi.load('client', async () => {
+                    await gapi.client.init({});
+                    await gapi.client.load('https://sheets.googleapis.com/$discovery/rest?version=v4');
+                    await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
+                });
+            }
+        };
+
+        // ============================================================
+        // 3. GOOGLE LOGIN & AUTO-CREATE GOOGLE SHEET
+        // ============================================================
+        function signInWithGoogle() {
+            if (GOOGLE_CLIENT_ID === "YOUR_GOOGLE_CLIENT_ID_HERE") {
+                alert("කරුණාකර පළමුව index.html හි GOOGLE_CLIENT_ID සඳහා ඔබේ Google Cloud Client ID එක ඇතුළත් කරන්න.");
+                return;
+            }
+            document.getElementById('loginStatus').innerText = "🔄 Google ගිණුම සම්බන්ධ වෙමින් පවතී...";
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: SCOPES,
+                callback: async (resp) => {
+                    if (resp.error) {
+                        document.getElementById('loginStatus').innerText = "❌ Login අසාර්ථකයි.";
+                        return;
+                    }
+                    accessToken = resp.access_token;
+                    gapi.client.setToken({ access_token: accessToken });
+                    await initSchoolDatabase();
+                }
+            });
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        }
+
+        function logoutGoogle() {
+            if (confirm("පද්ධතියෙන් ඉවත් වීමට (Logout) අවශ්‍යද?")) {
+                accessToken = null;
+                spreadsheetId = null;
+                document.getElementById("mainApp").style.display = "none";
+                document.getElementById("loginScreen").style.display = "flex";
+                document.getElementById("syncStatusBadge").style.display = "none";
+                document.getElementById("loginStatus").innerText = "";
+            }
+        }
+
+        async function initSchoolDatabase() {
+            try {
+                document.getElementById('loginStatus').innerText = "🔍 Google Drive හි Database එක සොයමින් පවතී...";
+                const res = await gapi.client.drive.files.list({
+                    q: `name='${DB_FILE_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
+                    fields: 'files(id, name)'
+                });
+
+                if (res.result.files && res.result.files.length > 0) {
+                    spreadsheetId = res.result.files[0].id;
+                } else {
+                    document.getElementById('loginStatus').innerText = "✨ අලුත් Google Sheet Database එකක් නිර්මාණය වෙමින් පවතී...";
+                    const createRes = await gapi.client.sheets.spreadsheets.create({
+                        properties: { title: DB_FILE_NAME },
+                        sheets: [
+                            { properties: { title: 'Settings' } },
+                            { properties: { title: 'Students' } },
+                            { properties: { title: 'Teachers' } },
+                            { properties: { title: 'Marks' } }
+                        ]
+                    });
+                    spreadsheetId = createRes.result.spreadsheetId;
+                    // Write initial headers
+                    await gapi.client.sheets.spreadsheets.values.batchUpdate({
+                        spreadsheetId: spreadsheetId,
+                        resource: {
+                            valueInputOption: 'RAW',
+                            data: [
+                                { range: 'Settings!A1:B2', values: [['Key', 'Value'], ['schoolName', 'මගේ පාසල']] },
+                                { range: 'Students!A1:I1', values: [['admissionNo', 'fullName', 'nameInitials', 'grade', 'gender', 'dob', 'scholarship', 'address', 'phone']] },
+                                { range: 'Teachers!A1:L1', values: [['id', 'name', 'nic', 'address', 'qualifications', 'salaryNo', 'appointDate', 'schoolAppointDate', 'timetableDate', 'phone', 'classTeacher', 'subjects']] },
+                                { range: 'Marks!A1:I1', values: [['id', 'name', 'term', 'grade', 'fullClassName', 'total', 'average', 'serialNo', 'marksJSON']] }
+                            ]
+                        }
+                    });
+                }
+
+                await loadAllDataFromSheet();
+                
+                // Generate Student Portal Link
+                const portalUrl = `${window.location.origin}${window.location.pathname}?sheet=${spreadsheetId}`;
+                document.getElementById('studentPortalLinkBox').value = portalUrl;
+
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("mainApp").style.display = "block";
+                setSyncStatus("🟢 Google Sheet Connected");
+                setTimeout(updateChart, 100);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loginStatus').innerText = "❌ දෝෂයක් ඇති විය: " + (err.result?.error?.message || err.message);
+            }
+        }
+
+        // ============================================================
+        // 4. READ / WRITE GOOGLE SHEETS
+        // ============================================================
+        async function loadAllDataFromSheet() {
+            setSyncStatus("🔄 දත්ත ලබා ගනිමින්...", "#f59e0b");
+            const res = await gapi.client.sheets.spreadsheets.values.batchGet({
+                spreadsheetId: spreadsheetId,
+                ranges: ['Settings!A2:B', 'Students!A2:I', 'Teachers!A2:L', 'Marks!A2:I']
+            });
+
+            const ranges = res.result.valueRanges;
+            
+            // Settings
+            const settingsRows = ranges[0].values || [];
+            const nameRow = settingsRows.find(r => r[0] === 'schoolName');
+            updateSchoolNameUI(nameRow ? nameRow[1] : 'මගේ පාසල');
+
+            // Students
+            registeredStudents = (ranges[1].values || []).map(r => ({
+                admissionNo: r[0] || '', fullName: r[1] || '', nameInitials: r[2] || '',
+                grade: r[3] || '', gender: r[4] || 'පිරිමි', dob: r[5] || '',
+                scholarship: r[6] || 'නැත', address: r[7] || '', phone: r[8] || ''
+            })).filter(s => s.admissionNo);
+
+            // Teachers
+            registeredTeachers = (ranges[2].values || []).map(r => ({
+                id: r[0] || '', name: r[1] || '', nic: r[2] || '', address: r[3] || '',
+                qualifications: r[4] || '', salaryNo: r[5] || '', appointDate: r[6] || '',
+                schoolAppointDate: r[7] || '', timetableDate: r[8] || '', phone: r[9] || '',
+                classTeacher: r[10] || 'නැත', subjects: r[11] || ''
+            })).filter(t => t.id);
+
+            // Marks
+            studentsData = (ranges[3].values || []).map(r => ({
+                id: r[0] || '', name: r[1] || '', term: r[2] || '', grade: r[3] || '',
+                fullClassName: r[4] || '', total: parseFloat(r[5]) || 0, average: parseFloat(r[6]) || 0,
+                serialNo: parseInt(r[7]) || 1, marks: r[8] ? JSON.parse(r[8]) : {}
+            })).filter(m => m.id);
+
+            renderStudentsTable();
+            renderTeachersTable();
+            updateTable();
+            updateAnalysisTable();
+            updateChart();
+            setSyncStatus("🟢 Google Sheet Connected");
+        }
+
+        async function syncSheetTab(sheetName, headers, rows) {
+            setSyncStatus("🔄 Google Sheet වෙත Save වෙමින්...", "#f59e0b");
+            try {
+                await gapi.client.sheets.spreadsheets.values.clear({
+                    spreadsheetId: spreadsheetId,
+                    range: `${sheetName}!A:Z`
+                });
+                await gapi.client.sheets.spreadsheets.values.update({
+                    spreadsheetId: spreadsheetId,
+                    range: `${sheetName}!A1`,
+                    valueInputOption: 'RAW',
+                    resource: { values: [headers, ...rows] }
+                });
+                setSyncStatus("🟢 Google Sheet Saved!", "#10b981");
+            } catch (err) {
+                console.error(err);
+                setSyncStatus("🔴 Save Failed!", "#ef4444");
+                alert("Google Sheet වෙත Save කිරීමේදී දෝෂයක් ඇති විය.");
+            }
+        }
+
+        async function saveSchoolSettings() {
+            let newName = document.getElementById('settingSchoolName').value.trim();
+            if (!newName) return alert("කරුණාකර පාසලේ නම ඇතුළත් කරන්න.");
+            updateSchoolNameUI(newName);
+            await syncSheetTab('Settings', ['Key', 'Value'], [['schoolName', newName]]);
+            alert("පාසලේ නම සාර්ථකව සුරකින ලදී!");
+        }
+
+        function openMyGoogleSheet() {
+            if (spreadsheetId) window.open(`https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`, '_blank');
+        }
+
+        function copyPortalLink() {
+            let box = document.getElementById('studentPortalLinkBox');
+            box.select();
+            navigator.clipboard.writeText(box.value);
+            alert("Student Portal Link එක Copy කරන ලදී!");
+        }
+
+        // ============================================================
+        // 5. CORE APP LOGIC (Students, Teachers, Marks, Reports)
+        // ============================================================
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('btn-' + tabName).classList.add('active');
+            if(tabName === 'marks' || tabName === 'analysis') setTimeout(updateChart, 50);
+        }
+
+        function getGrade(mark) {
+            if (mark === 'AB') return 'AB';
+            if (mark >= 75) return 'A';
+            if (mark >= 65) return 'B';
+            if (mark >= 50) return 'C';
+            if (mark >= 35) return 'S';
+            if (mark >= 0)  return 'W';
+            return '-';
+        }
+
+        function getReqSubCount(gradeStr) { return parseInt(gradeStr) <= 9 ? 13 : 9; }
+
+        // --- Student Registration ---
+        function resetStudentForm() {
+            document.getElementById("studentRegForm").reset();
+            document.getElementById("reg_admNo").readOnly = false;
+            document.getElementById("studentSubmitBtn").innerText = "ශිෂ්‍යයා ලියාපදිංචි/වෙනස් කරන්න";
+        }
+
+        document.getElementById("studentRegForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            let phone = document.getElementById("reg_phone").value.trim();
+            if (!/^\d{10}$/.test(phone)) return alert("කරුණාකර නිවැරදි දුරකථන අංකයක් (ඉලක්කම් 10) ඇතුළත් කරන්න.");
+
+            let newStudent = {
+                admissionNo: document.getElementById("reg_admNo").value.trim(),
+                fullName: document.getElementById("reg_fullName").value.trim(),
+                nameInitials: document.getElementById("reg_initialName").value.trim(),
+                grade: document.getElementById("reg_grade").value,
+                gender: document.getElementById("reg_gender").value,
+                dob: document.getElementById("reg_dob").value,
+                scholarship: document.getElementById("reg_scholarship").value,
+                address: document.getElementById("reg_address").value.trim(),
+                phone: phone
+            };
+
+            let idx = registeredStudents.findIndex(s => s.admissionNo === newStudent.admissionNo);
+            if (idx > -1) registeredStudents[idx] = newStudent;
+            else registeredStudents.push(newStudent);
+
+            const rows = registeredStudents.map(s => [s.admissionNo, s.fullName, s.nameInitials, s.grade, s.gender, s.dob, s.scholarship, s.address, s.phone]);
+            await syncSheetTab('Students', ['admissionNo', 'fullName', 'nameInitials', 'grade', 'gender', 'dob', 'scholarship', 'address', 'phone'], rows);
+            renderStudentsTable();
+            loadStudentsForMarks();
+            resetStudentForm();
+            alert("ශිෂ්‍ය තොරතුරු සාර්ථකව සුරකින ලදී!");
+        });
+
+        function renderStudentsTable() {
+            let filterGrade = document.getElementById("filterRegGrade").value;
+            let tbody = document.getElementById("studentsRegTableBody");
+            tbody.innerHTML = "";
+            let filtered = filterGrade === "all" ? [...registeredStudents] : registeredStudents.filter(s => s.grade === filterGrade);
+            filtered.sort((a, b) => (a.gender === b.gender ? a.nameInitials.localeCompare(b.nameInitials) : (a.gender === 'පිරිමි' ? -1 : 1)));
+
+            filtered.forEach(s => {
+                tbody.innerHTML += `<tr>
+                    <td style="font-weight:bold; color:var(--text-brand);">${s.admissionNo}</td>
+                    <td style="text-align:left;">${s.nameInitials}</td>
+                    <td>${s.gender}</td><td>${s.grade}</td><td>${s.dob || '-'}</td><td>${s.scholarship}</td><td>${s.phone}</td>
+                    <td><button type="button" onclick="editStudent('${s.admissionNo}')" style="background:#f59e0b; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Edit</button></td>
+                </tr>`;
+            });
+        }
+
+        function editStudent(admNo) {
+            let s = registeredStudents.find(x => x.admissionNo === admNo);
+            if (!s) return;
+            document.getElementById("reg_admNo").value = s.admissionNo;
+            document.getElementById("reg_admNo").readOnly = true;
+            document.getElementById("reg_fullName").value = s.fullName;
+            document.getElementById("reg_initialName").value = s.nameInitials;
+            document.getElementById("reg_grade").value = s.grade;
+            document.getElementById("reg_gender").value = s.gender;
+            document.getElementById("reg_dob").value = s.dob;
+            document.getElementById("reg_scholarship").value = s.scholarship;
+            document.getElementById("reg_address").value = s.address;
+            document.getElementById("reg_phone").value = s.phone;
+            document.getElementById("studentSubmitBtn").innerText = "ශිෂ්‍ය තොරතුරු Update කරන්න";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- Teacher Registration ---
+        function toggleTeacherSubjectDropdown() {
+            let list = document.getElementById("teacherSubjectList");
+            list.style.display = list.style.display === "none" ? "block" : "none";
+        }
+
+        function updateTeacherSubjects() {
+            let selected = Array.from(document.querySelectorAll('#teacherSubjectList input:checked')).map(cb => cb.value);
+            document.getElementById('treg_subjects_hidden').value = selected.join(', ');
+            document.getElementById('teacherSubjectText').innerText = selected.length > 0 ? selected.length + " තෝරාගෙන ඇත" : "විෂයයන් තෝරන්න";
+        }
+
+        function resetTeacherForm() {
+            document.getElementById("teacherRegForm").reset();
+            document.getElementById("treg_id").readOnly = false;
+            document.querySelectorAll('#teacherSubjectList input').forEach(cb => cb.checked = false);
+            updateTeacherSubjects();
+            document.getElementById("teacherSubmitBtn").innerText = "ගුරුවරයා ලියාපදිංචි/වෙනස් කරන්න";
+        }
+
+        document.getElementById("teacherRegForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            let id = document.getElementById("treg_id").value.trim();
+            let name = document.getElementById("treg_name").value.trim();
+            let phone = document.getElementById("treg_phone").value.trim().replace(/[\s-]/g, '');
+            if (!id || !name || !/^\d{10}$/.test(phone)) return alert("කරුණාකර ID, නම සහ නිවැරදි දුරකථන අංකය ඇතුළත් කරන්න.");
+
+            let newTeacher = {
+                id, name, nic: document.getElementById("treg_nic").value.trim(),
+                address: document.getElementById("treg_address").value.trim(),
+                qualifications: document.getElementById("treg_qualifications").value.trim(),
+                salaryNo: document.getElementById("treg_salary_no").value.trim(),
+                appointDate: document.getElementById("treg_appoint_date").value,
+                schoolAppointDate: document.getElementById("treg_school_appoint_date").value,
+                timetableDate: document.getElementById("treg_timetable_date").value,
+                phone, classTeacher: document.getElementById("treg_class").value,
+                subjects: document.getElementById("treg_subjects_hidden").value
+            };
+
+            let idx = registeredTeachers.findIndex(t => t.id === id);
+            if (idx > -1) registeredTeachers[idx] = newTeacher;
+            else registeredTeachers.push(newTeacher);
+
+            const rows = registeredTeachers.map(t => [t.id, t.name, t.nic, t.address, t.qualifications, t.salaryNo, t.appointDate, t.schoolAppointDate, t.timetableDate, t.phone, t.classTeacher, t.subjects]);
+            await syncSheetTab('Teachers', ['id', 'name', 'nic', 'address', 'qualifications', 'salaryNo', 'appointDate', 'schoolAppointDate', 'timetableDate', 'phone', 'classTeacher', 'subjects'], rows);
+            renderTeachersTable();
+            resetTeacherForm();
+            alert("ගුරු තොරතුරු සාර්ථකව සුරකින ලදී!");
+        });
+
+        function renderTeachersTable() {
+            let tbody = document.getElementById("teachersRegTableBody");
+            tbody.innerHTML = "";
+            registeredTeachers.forEach(t => {
+                tbody.innerHTML += `<tr>
+                    <td style="font-weight:bold; color:#f43f5e;">${t.id}</td>
+                    <td style="text-align:left;">${t.name}</td>
+                    <td>${t.classTeacher}</td><td style="font-size:13px;">${t.subjects || '-'}</td><td>${t.phone}</td>
+                    <td><button type="button" onclick="editTeacher('${t.id}')" style="background:#f59e0b; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Edit</button></td>
+                </tr>`;
+            });
+        }
+
+        function editTeacher(id) {
+            let t = registeredTeachers.find(x => x.id === id);
+            if (!t) return;
+            document.getElementById("treg_id").value = t.id;
+            document.getElementById("treg_id").readOnly = true;
+            document.getElementById("treg_name").value = t.name;
+            document.getElementById("treg_nic").value = t.nic;
+            document.getElementById("treg_address").value = t.address;
+            document.getElementById("treg_qualifications").value = t.qualifications;
+            document.getElementById("treg_salary_no").value = t.salaryNo;
+            document.getElementById("treg_appoint_date").value = t.appointDate;
+            document.getElementById("treg_school_appoint_date").value = t.schoolAppointDate;
+            document.getElementById("treg_timetable_date").value = t.timetableDate;
+            document.getElementById("treg_phone").value = t.phone;
+            document.getElementById("treg_class").value = t.classTeacher || "නැත";
+            let tSubs = t.subjects ? t.subjects.split(', ') : [];
+            document.querySelectorAll('#teacherSubjectList input').forEach(cb => cb.checked = tSubs.includes(cb.value));
+            updateTeacherSubjects();
+            document.getElementById("teacherSubmitBtn").innerText = "ගුරු තොරතුරු Update කරන්න";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- Marks Entry & Subjects ---
+        const juniorSubjects = ["සිංහල", "දෙමළ", "ආගම", "ගණිතය", "විද්‍යාව", "ඉංග්‍රීසි", "ඉතිහාසය", "භූගෝල විද්‍යාව", "පුරවැසි අධ්‍යාපනය", "සෞඛ්‍යය", "ICT", "PTS"];
+        const aestheticSubjects = ["චිත්‍ර", "නැටුම්"];
+        const seniorCore = ["සිංහල", "ආගම", "ගණිතය", "විද්‍යාව", "ඉංග්‍රීසි", "ඉතිහාසය"];
+        const bucket1 = ["පුරවැසි අධ්‍යාපනය", "භූගෝලය", "දෙමළ"];
+        const bucket2 = ["චිත්‍ර", "නැටුම්"];
+        const bucket3 = ["කෘෂි හා ආහාර තාක්ෂණය", "සෞඛ්‍ය හා ශාරිරික අධ්‍යාපනය"];
+
+        function generateSubjectList() {
+            let grade = parseInt(document.getElementById("subWiseGrade").value);
+            let sel = document.getElementById("subWiseSubject");
+            sel.innerHTML = `<option value="" disabled selected>විෂය තෝරන්න</option>`;
+            let subs = grade <= 9 ? [...juniorSubjects, ...aestheticSubjects] : [...seniorCore, ...bucket1, ...bucket2, ...bucket3];
+            subs.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+
+        function generateStudentsListForSubject() {
+            let grade = document.getElementById("subWiseGrade").value;
+            let subject = document.getElementById("subWiseSubject").value;
+            let container = document.getElementById("subjectWiseStudentsContainer");
+            let list = registeredStudents.filter(s => s.grade === grade).sort((a, b) => a.nameInitials.localeCompare(b.nameInitials));
+            if (list.length === 0) return container.innerHTML = "<p style='color:red; text-align:center;'>මෙම ශ්‍රේණියේ සිසුන් ලියාපදිංචි කර නොමැත.</p>";
+
+            let html = `<table class="dropdown-table"><thead><tr><th>Adm No</th><th style="text-align:left;">නම</th><th>ලකුණු</th></tr></thead><tbody>`;
+            list.forEach(s => {
+                html += `<tr><td style="font-weight:bold; color:var(--text-brand);">${s.admissionNo}</td><td style="text-align:left;">${s.nameInitials}</td>
+                <td><input type="text" class="sub-wise-mark" data-id="${s.admissionNo}" data-name="${s.nameInitials}" placeholder="0-100 / AB" style="max-width:120px; padding:8px;"></td></tr>`;
+            });
+            container.innerHTML = html + `</tbody></table>`;
+        }
+
+        async function saveMarksToSheet() {
+            const rows = studentsData.map(m => [m.id, m.name, m.term, m.grade, m.fullClassName, m.total, m.average, m.serialNo, JSON.stringify(m.marks)]);
+            await syncSheetTab('Marks', ['id', 'name', 'term', 'grade', 'fullClassName', 'total', 'average', 'serialNo', 'marksJSON'], rows);
+            updateTable(); updateAnalysisTable(); updateChart();
+        }
+
+        async function saveSubjectWiseMarks() {
+            let term = document.getElementById("subWiseTerm").value;
+            let grade = document.getElementById("subWiseGrade").value;
+            let subject = document.getElementById("subWiseSubject").value;
+            let inputs = document.querySelectorAll(".sub-wise-mark");
+            if (!grade || !subject || inputs.length === 0) return alert("ශ්‍රේණිය සහ විෂය තෝරන්න!");
+
+            inputs.forEach(inp => {
+                let raw = inp.value.trim().toUpperCase();
+                if (!raw) return;
+                let mark = raw === "AB" ? "AB" : parseFloat(raw);
+                if (raw !== "AB" && isNaN(mark)) return;
+                let id = inp.dataset.id, name = inp.dataset.name;
+                let rec = studentsData.find(s => s.id === id && s.term === term);
+                if (rec) {
+                    rec.marks[subject] = mark;
+                } else {
+                    rec = { id, name, term, grade, fullClassName: "Grade " + grade, marks: { [subject]: mark }, total: 0, average: 0, serialNo: studentsData.length + 1 };
+                    studentsData.push(rec);
+                }
+                let tot = 0, cnt = 0;
+                for (let k in rec.marks) { if (rec.marks[k] !== "AB") tot += rec.marks[k]; cnt++; }
+                rec.total = tot; rec.average = cnt ? parseFloat((tot / cnt).toFixed(2)) : 0;
+            });
+
+            await saveMarksToSheet();
+            alert(subject + " ලකුණු සාර්ථකව Save කරන ලදී!");
+            document.getElementById("subjectWiseStudentsContainer").innerHTML = "";
+        }
+
+        function toggleStudentDropdown() {
+            let list = document.getElementById("studentDropdownList");
+            if (list.innerHTML.trim()) list.style.display = list.style.display === "none" ? "block" : "none";
+        }
+
+        function loadStudentsForMarks() {
+            let grade = document.getElementById("gradeSelect").value;
+            let list = registeredStudents.filter(s => s.grade === grade);
+            let dropList = document.getElementById("studentDropdownList");
+            if (!list.length) {
+                document.getElementById("selectedStudentText").innerText = "මෙම ශ්‍රේණියේ ළමුන් නොමැත";
+                dropList.innerHTML = ""; return;
+            }
+            document.getElementById("selectedStudentText").innerText = "ශිෂ්‍යයා තෝරන්න";
+            let html = `<table class="dropdown-table"><thead><tr><th>No</th><th>Adm No</th><th>නම</th></tr></thead><tbody>`;
+            list.forEach((s, i) => {
+                html += `<tr onclick="selectStudentForMarks('${s.admissionNo}', '${s.nameInitials}')"><td>${i+1}</td><td>${s.admissionNo}</td><td style="text-align:left;">${s.nameInitials}</td></tr>`;
+            });
+            dropList.innerHTML = html + `</tbody></table>`;
+        }
+
+        function selectStudentForMarks(id, name) {
+            document.getElementById("selectedStudentDropValue").value = id;
+            document.getElementById("selectedStudentText").innerText = id + " - " + name;
+            document.getElementById("studentDropdownList").style.display = "none";
+            document.getElementById("studentId").value = id;
+            document.getElementById("studentName").value = name;
+        }
+
+        function loadSubjects() {
+            let grade = parseInt(document.getElementById("gradeSelect").value);
+            let c = document.getElementById("subjectsContainer"); c.innerHTML = "";
+            if (isNaN(grade)) return;
+            if (grade <= 9) {
+                juniorSubjects.forEach(s => c.innerHTML += `<div class="subject-row"><label>${s}</label><input type="text" class="mark-input" data-subject="${s}" placeholder="0-100 / ab"></div>`);
+                c.innerHTML += `<div class="subject-row"><select id="aesSubject"><option value="" disabled selected>සෞන්දර්ය</option>${aestheticSubjects.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><input type="text" id="m_aes" placeholder="ලකුණු / ab"></div>`;
+            } else {
+                seniorCore.forEach(s => c.innerHTML += `<div class="subject-row"><label>${s}</label><input type="text" class="mark-input" data-subject="${s}" placeholder="0-100 / ab"></div>`);
+                [bucket1, bucket2, bucket3].forEach((b, i) => {
+                    c.innerHTML += `<div class="subject-row"><select id="b${i+1}"><option value="" disabled selected>කාණ්ඩය ${i+1}</option>${b.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><input type="text" id="m_b${i+1}" placeholder="ලකුණු / ab"></div>`;
+                });
+            }
+        }
+
+        document.getElementById("marksForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            let id = document.getElementById("studentId").value, name = document.getElementById("studentName").value;
+            if (!id) return alert("කරුණාකර ශිෂ්‍යයා තෝරන්න!");
+            let term = document.getElementById("termSelect").value, grade = document.getElementById("gradeSelect").value;
+            let newMarks = {};
+
+            document.querySelectorAll(".mark-input").forEach(inp => {
+                let raw = inp.value.trim().toUpperCase();
+                if (raw === "AB") newMarks[inp.dataset.subject] = "AB";
+                else if (raw !== "" && !isNaN(parseFloat(raw))) newMarks[inp.dataset.subject] = parseFloat(raw);
+            });
+
+            if (parseInt(grade) <= 9) {
+                let s = document.getElementById('aesSubject')?.value, r = document.getElementById('m_aes')?.value.trim().toUpperCase();
+                if (s && r) newMarks[s] = r === "AB" ? "AB" : parseFloat(r);
+            } else {
+                for (let i = 1; i <= 3; i++) {
+                    let s = document.getElementById(`b${i}`)?.value, r = document.getElementById(`m_b${i}`)?.value.trim().toUpperCase();
+                    if (s && r) newMarks[s] = r === "AB" ? "AB" : parseFloat(r);
+                }
+            }
+
+            let rec = studentsData.find(s => s.id === id && s.term === term);
+            if (rec) rec.marks = { ...rec.marks, ...newMarks };
+            else { rec = { id, name, term, grade, fullClassName: "Grade " + grade, marks: newMarks, total: 0, average: 0, serialNo: studentsData.length + 1 }; studentsData.push(rec); }
+
+            let tot = 0, cnt = 0;
+            for (let k in rec.marks) { if (rec.marks[k] !== "AB") tot += rec.marks[k]; cnt++; }
+            rec.total = tot; rec.average = cnt ? parseFloat((tot / cnt).toFixed(2)) : 0;
+
+            await saveMarksToSheet();
+            alert("ලකුණු සාර්ථකව Save කරන ලදී!");
+            clearMarksInputs();
+        });
+
+        function clearMarksInputs() {
+            document.querySelectorAll(".mark-input, input[id^='m_']").forEach(i => i.value = "");
+            document.getElementById("studentId").value = "";
+            document.getElementById("selectedStudentText").innerText = "ශිෂ්‍යයා තෝරන්න";
+        }
+
+        function clearTableFilters() {
+            document.getElementById("filterSubject").value = "all";
+            document.getElementById("filterCondition").value = "all";
+            updateTable();
+        }
+
+        function clearSearchInputs() {
+            document.getElementById("searchIdInput").value = "";
+            document.getElementById("searchResults").innerHTML = "";
+        }
+
+        // --- Rank Board & Analysis Tables ---
+        function updateTable(isFilter = false) {
+            let term = document.getElementById("tableTermSelect").value;
+            let grade = document.getElementById("tableGradeSelect").value;
+            document.getElementById("printSubHeader").innerText = `වාරය: ${term} | ශ්‍රේණිය: ${grade}`;
+
+            let data = studentsData.filter(s => s.term === term && s.grade === grade);
+            let subs = Array.from(new Set(data.flatMap(s => Object.keys(s.marks))));
+            let subSel = document.getElementById("filterSubject");
+            if (!isFilter) {
+                let cur = subSel.value;
+                subSel.innerHTML = `<option value="all">සියලුම විෂයයන්</option>` + subs.map(s => `<option value="${s}" ${s===cur?'selected':''}>${s}</option>`).join('');
+            }
+
+            let fSub = subSel.value, fCond = document.getElementById("filterCondition").value;
+            if (fSub !== "all" || fCond !== "all") {
+                data = data.filter(s => {
+                    let m = s.marks[fSub]; if (m === undefined) return false;
+                    if (fCond === "75_100") return m >= 75;
+                    if (fCond === "65_74") return m >= 65 && m <= 74;
+                    if (fCond === "50_64") return m >= 50 && m <= 64;
+                    if (fCond === "35_49") return m >= 35 && m <= 49;
+                    if (fCond === "0_34") return m <= 34 || m === "AB";
+                    return true;
+                });
+            }
+
+            document.getElementById("tableHeadRow").innerHTML = `<th>No</th><th style="text-align:left;">නම</th>` + subs.map(s => `<th>${s}</th>`).join('') + `<th>එකතුව</th><th>සාමාන්‍යය</th><th>ස්ථානය</th>`;
+            let tbody = document.getElementById("tableBody"); tbody.innerHTML = "";
+            if (!data.length) return tbody.innerHTML = `<tr><td colspan="${subs.length+5}" style="padding:20px;">දත්ත නොමැත.</td></tr>`;
+
+            data.sort((a, b) => b.total - a.total);
+            let rank = 1, prev = -1;
+            data.forEach((s, i) => {
+                if (i > 0 && s.total < prev) rank = i + 1;
+                prev = s.total;
+                let req = getReqSubCount(grade);
+                let rText = Object.keys(s.marks).length >= req ? rank : 'Pending';
+                tbody.innerHTML += `<tr><td>${i+1}</td><td style="text-align:left; font-weight:600;">${s.name}</td>` +
+                    subs.map(sub => `<td>${s.marks[sub] ?? '-'}</td>`).join('') +
+                    `<td style="font-weight:bold;">${s.total}</td><td style="font-weight:bold; color:var(--text-brand);">${s.average}</td><td class="rank-col">${rText}</td></tr>`;
+            });
+        }
+
+        function updateAnalysisTable() {
+            let term = document.getElementById("analysisTermSelect").value;
+            let grade = document.getElementById("analysisGradeSelect").value;
+            document.getElementById("analysisPrintSubHeader").innerText = `වාරය: ${term} | ශ්‍රේණිය: ${grade}`;
+
+            let data = studentsData.filter(s => s.term === term && s.grade === grade);
+            let subs = Array.from(new Set(data.flatMap(s => Object.keys(s.marks))));
+            document.getElementById("analysisTableHeadRow").innerHTML = `<th>No</th><th style="text-align:left;">නම</th>` + subs.map(s => `<th>${s}</th>`).join('') + `<th>A</th><th>B</th><th>C</th><th>S</th><th>W</th>`;
+            let tbody = document.getElementById("analysisTableBody"); tbody.innerHTML = "";
+            if (!data.length) return tbody.innerHTML = `<tr><td colspan="${subs.length+7}" style="padding:20px;">දත්ත නොමැත.</td></tr>`;
+
+            data.forEach((s, i) => {
+                let c = { A:0, B:0, C:0, S:0, W:0 };
+                let cells = subs.map(sub => {
+                    let m = s.marks[sub]; if (m === undefined) return `<td>-</td>`;
+                    let g = getGrade(m); if (c[g] !== undefined) c[g]++;
+                    return `<td style="font-weight:bold;">${g}</td>`;
+                }).join('');
+                tbody.innerHTML += `<tr><td>${i+1}</td><td style="text-align:left; font-weight:600;">${s.name}</td>${cells}<td>${c.A||'-'}</td><td>${c.B||'-'}</td><td>${c.C||'-'}</td><td>${c.S||'-'}</td><td>${c.W||'-'}</td></tr>`;
+            });
+        }
+
+        function downloadPDF() {
+            const el = document.getElementById('reportCard');
+            document.getElementById('printHeader').style.display = 'block';
+            document.getElementById('actionButtons').style.display = 'none';
+            el.classList.add('pdf-mode');
+            html2pdf().set({ margin: 0.2, filename: `Marks_Report.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } }).from(el).save().then(() => {
+                document.getElementById('printHeader').style.display = 'none';
+                document.getElementById('actionButtons').style.display = 'flex';
+                el.classList.remove('pdf-mode');
+            });
+        }
+
+        function downloadAnalysisPDF() {
+            const el = document.getElementById('analysisReportCard');
+            document.getElementById('analysisPrintHeader').style.display = 'block';
+            document.getElementById('analysisActionButtons').style.display = 'none';
+            el.classList.add('pdf-mode');
+            html2pdf().set({ margin: 0.2, filename: `Master_Sheet.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } }).from(el).save().then(() => {
+                document.getElementById('analysisPrintHeader').style.display = 'none';
+                document.getElementById('analysisActionButtons').style.display = 'flex';
+                el.classList.remove('pdf-mode');
+            });
+        }
+
+        function updateChart() {
+            let term = document.getElementById("chartTermSelect").value;
+            let grade = document.getElementById("chartGradeSelect").value;
+            let data = studentsData.filter(s => s.term === term && s.grade === grade);
+            let subs = Array.from(new Set(data.flatMap(s => Object.keys(s.marks))));
+            let avgs = subs.map(sub => {
+                let sum = 0, cnt = 0;
+                data.forEach(s => { if (s.marks[sub] !== undefined) { if (s.marks[sub] !== "AB") sum += s.marks[sub]; cnt++; } });
+                return cnt ? parseFloat((sum / cnt).toFixed(2)) : 0;
+            });
+            if (myChart) myChart.destroy();
+            let canvas = document.getElementById('marksChart');
+            if (!canvas) return;
+            myChart = new Chart(canvas.getContext('2d'), {
+                type: 'bar',
+                data: { labels: subs, datasets: [{ data: avgs, backgroundColor: '#3b82f6', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function searchAdminStudentById() {
+            let id = document.getElementById("searchIdInput").value.trim();
+            let resDiv = document.getElementById("searchResults");
+            let recs = studentsData.filter(s => s.id === id);
+            if (!recs.length) return resDiv.innerHTML = "<p style='color:red; text-align:center;'>ප්‍රතිඵල හමු නොවීය.</p>";
+            resDiv.innerHTML = recs.map(r => `<div class="search-result-box"><h4>👤 ${r.name} (${r.term})</h4>
+                <table class="search-table"><tr><th>විෂය</th><th>ලකුණු</th><th>සාමාර්ථය</th></tr>
+                ${Object.entries(r.marks).map(([k,v]) => `<tr><td style="text-align:left;">${k}</td><td>${v}</td><td>${getGrade(v)}</td></tr>`).join('')}
+                <tr><th>එකතුව</th><th colspan="2">${r.total} (සාමාන්‍යය: ${r.average})</th></tr></table></div>`).join('');
+        }
+
+        // ============================================================
+        // 6. PUBLIC STUDENT PORTAL (Reads Public Sheet via GVIZ)
+        // ============================================================
+        function showStudentPortal() {
+            document.getElementById("adminLoginBox").style.display = "none";
+            document.getElementById("studentSearchBox").style.display = "block";
+        }
+        function showAdminLogin() {
+            document.getElementById("studentSearchBox").style.display = "none";
+            document.getElementById("adminLoginBox").style.display = "block";
+        }
+
+        async function fetchPublicSheet(sheetId, tabName) {
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
+            const res = await fetch(url);
+            const text = await res.text();
+            const json = JSON.parse(text.substring(47).slice(0, -2));
+            return json.table.rows.map(r => r.c.map(cell => (cell && cell.v !== null) ? String(cell.v) : ''));
+        }
+
+        async function loadPublicSchoolName(sheetId) {
+            try {
+                const rows = await fetchPublicSheet(sheetId, 'Settings');
+                const row = rows.find(r => r[0] === 'schoolName');
+                if (row) updateSchoolNameUI(row[1]);
+            } catch (e) {}
+        }
+
+        async function searchInPortal() {
+            let sheetId = document.getElementById("portalSheetIdInput").value.trim();
+            let id = document.getElementById("portalSearchInput").value.trim();
+            let dob = document.getElementById("portalDobInput").value.trim();
+            let term = document.getElementById("portalTermSelect").value;
+            let resDiv = document.getElementById("portalSearchResults");
+
+            if (!sheetId || !id || !dob) return resDiv.innerHTML = "<p style='color:red; text-align:center;'>කරුණාකර සියලු තොරතුරු ඇතුළත් කරන්න.</p>";
+            resDiv.innerHTML = "<p style='text-align:center;'>🔄 ප්‍රතිඵල සොයමින් පවතී...</p>";
+
+            try {
+                const stRows = await fetchPublicSheet(sheetId, 'Students');
+                const student = stRows.find(r => r[0] === id);
+                if (!student) return resDiv.innerHTML = "<p style='color:red; text-align:center;'>මෙම ඇතුළත්වීමේ අංකය ලියාපදිංචි කර නොමැත.</p>";
+                if (student[5] !== dob) return resDiv.innerHTML = "<p style='color:red; text-align:center;'>උපන් දිනය වැරදියි!</p>";
+
+                const mRows = await fetchPublicSheet(sheetId, 'Marks');
+                const rec = mRows.find(r => r[0] === id && r[2] === term);
+                if (!rec) return resDiv.innerHTML = "<p style='color:red; text-align:center;'>මෙම වාරයට අදාළ ප්‍රතිඵල නොමැත.</p>";
+
+                const marks = JSON.parse(rec[8] || '{}');
+                resDiv.innerHTML = `<div class="search-result-box">
+                    <h4>👤 ${rec[1]} - ${rec[4]} (${rec[2]})</h4>
+                    <table class="search-table"><tr><th>විෂය</th><th>ලකුණු</th><th>සාමාර්ථය</th></tr>
+                    ${Object.entries(marks).map(([k,v]) => `<tr><td style="text-align:left;">${k}</td><td><b>${v}</b></td><td><b>${getGrade(v)}</b></td></tr>`).join('')}
+                    <tr><th>එකතුව</th><th colspan="2">${rec[5]}</th></tr>
+                    <tr><th>සාමාන්‍යය</th><th colspan="2">${rec[6]}</th></tr>
+                    </table></div>`;
+            } catch (err) {
+                resDiv.innerHTML = "<p style='color:red; text-align:center;'>දත්ත ලබා ගැනීමට නොහැකි විය. පාසලේ Google Sheet එක 'Anyone with the link can View' කර ඇත්දැයි පරීක්ෂා කරන්න.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
