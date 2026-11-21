@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>School Marks Analyzer</title>
 
-    <!-- Custom SmartSoft Apps Developer SVG App Icon (Favicon & Apple Touch Icon) -->
-    <link rel="icon" type="image/svg+xml" id="appFavicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cdefs%3E%3ClinearGradient id='s1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='50%25' stop-color='%230284c7'/%3E%3Cstop offset='100%25' stop-color='%231d4ed8'/%3E%3C/linearGradient%3E%3ClinearGradient id='s2' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%231d4ed8'/%3E%3Cstop offset='50%25' stop-color='%230ea5e9'/%3E%3Cstop offset='100%25' stop-color='%2338bdf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='220' height='220' rx='46' fill='%23ffffff'/%3E%3Crect x='64' y='24' width='92' height='172' rx='20' fill='none' stroke='%230b2b6b' stroke-width='10'/%3E%3Crect x='97' y='37' width='26' height='5.5' rx='2.75' fill='%230b2b6b'/%3E%3Ccircle cx='110' cy='179' r='7' fill='%230b2b6b'/%3E%3Cpath d='M58 148 C22 158 14 126 53 100 C28 122 33 142 63 138 Z' fill='url(%23s2)'/%3E%3Cpath d='M152 62 C198 62 206 110 145 145 C114 162 79 165 53 147 C90 156 123 147 152 128 C185 105 185 75 152 70 Z' fill='url(%23s2)'/%3E%3Cpath d='M153 64 C126 43 81 46 64 70 C52 87 64 108 95 112 L125 117 C148 120 158 133 148 149 C133 170 86 172 59 152 L78 134 C97 148 123 148 130 137 C134 130 126 124 112 122 L86 118 C53 112 40 89 54 66 C73 37 125 34 156 56 Z' fill='url(%23s1)'/%3E%3Cpath d='M93 123 L81 132 L93 141 M127 123 L139 132 L127 141 M114 120 L106 144' fill='none' stroke='%230b2b6b' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" id="appTouchIcon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cdefs%3E%3ClinearGradient id='s1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='50%25' stop-color='%230284c7'/%3E%3Cstop offset='100%25' stop-color='%231d4ed8'/%3E%3C/linearGradient%3E%3ClinearGradient id='s2' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%231d4ed8'/%3E%3Cstop offset='50%25' stop-color='%230ea5e9'/%3E%3Cstop offset='100%25' stop-color='%2338bdf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='220' height='220' rx='46' fill='%23ffffff'/%3E%3Crect x='64' y='24' width='92' height='172' rx='20' fill='none' stroke='%230b2b6b' stroke-width='10'/%3E%3Crect x='97' y='37' width='26' height='5.5' rx='2.75' fill='%230b2b6b'/%3E%3Ccircle cx='110' cy='179' r='7' fill='%230b2b6b'/%3E%3Cpath d='M58 148 C22 158 14 126 53 100 C28 122 33 142 63 138 Z' fill='url(%23s2)'/%3E%3Cpath d='M152 62 C198 62 206 110 145 145 C114 162 79 165 53 147 C90 156 123 147 152 128 C185 105 185 75 152 70 Z' fill='url(%23s2)'/%3E%3Cpath d='M153 64 C126 43 81 46 64 70 C52 87 64 108 95 112 L125 117 C148 120 158 133 148 149 C133 170 86 172 59 152 L78 134 C97 148 123 148 130 137 C134 130 126 124 112 122 L86 118 C53 112 40 89 54 66 C73 37 125 34 156 56 Z' fill='url(%23s1)'/%3E%3Cpath d='M93 123 L81 132 L93 141 M127 123 L139 132 L127 141 M114 120 L106 144' fill='none' stroke='%230b2b6b' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <!-- Custom SmartSoft Apps Developer App Icon (Favicon, Apple Touch Icon & PWA Manifest) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" type="image/png" sizes="192x192" id="appFavicon" href="SmartSoft_App_Developer_Logo_192x192.png">
+    <link rel="apple-touch-icon" id="appTouchIcon" href="SmartSoft_App_Developer_Logo_192x192.png">
 
     <!-- Google Fonts: Inter, Noto Sans Sinhala, Noto Sans Tamil -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -118,29 +120,9 @@
     <!-- ==================== 1. ENGLISH-ONLY WELCOME SPLASH SCREEN (3 SECONDS) ==================== -->
     <div id="welcomeSplash" class="fixed inset-0 z-[9998] flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white p-6 transition-opacity duration-500">
         <div class="animate-fade-up flex flex-col items-center text-center max-w-md w-full">
-            <!-- Inline SmartSoft Apps Developer SVG Logo -->
-            <div class="w-40 h-40 mb-5 rounded-3xl bg-white p-3 shadow-2xl shadow-sky-500/20 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" class="w-full h-full">
-                    <defs>
-                        <linearGradient id="splashS1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#38bdf8"/>
-                            <stop offset="50%" stop-color="#0284c7"/>
-                            <stop offset="100%" stop-color="#1d4ed8"/>
-                        </linearGradient>
-                        <linearGradient id="splashS2" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#1d4ed8"/>
-                            <stop offset="50%" stop-color="#0ea5e9"/>
-                            <stop offset="100%" stop-color="#38bdf8"/>
-                        </linearGradient>
-                    </defs>
-                    <rect x="64" y="24" width="92" height="172" rx="20" fill="none" stroke="#0b2b6b" stroke-width="10"/>
-                    <rect x="97" y="37" width="26" height="5.5" rx="2.75" fill="#0b2b6b"/>
-                    <circle cx="110" cy="179" r="7" fill="#0b2b6b"/>
-                    <path d="M58 148 C22 158 14 126 53 100 C28 122 33 142 63 138 Z" fill="url(#splashS2)"/>
-                    <path d="M152 62 C198 62 206 110 145 145 C114 162 79 165 53 147 C90 156 123 147 152 128 C185 105 185 75 152 70 Z" fill="url(#splashS2)"/>
-                    <path d="M153 64 C126 43 81 46 64 70 C52 87 64 108 95 112 L125 117 C148 120 158 133 148 149 C133 170 86 172 59 152 L78 134 C97 148 123 148 130 137 C134 130 126 124 112 122 L86 118 C53 112 40 89 54 66 C73 37 125 34 156 56 Z" fill="url(#splashS1)"/>
-                    <path d="M93 123 L81 132 L93 141 M127 123 L139 132 L127 141 M114 120 L106 144" fill="none" stroke="#0b2b6b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+            <!-- SmartSoft Apps Developer 512x512 Welcome Screen Logo -->
+            <div class="w-40 h-40 mb-5 rounded-3xl bg-white p-2 shadow-2xl shadow-sky-500/20 flex items-center justify-center overflow-hidden">
+                <img src="SmartSoft_App_Developer_Logo_512x512.png" alt="SmartSoft Apps Developer" class="w-full h-full object-contain">
             </div>
 
             <div class="text-2xl font-extrabold tracking-tight mb-1">
@@ -152,7 +134,7 @@
                 <span class="h-0.5 flex-1 bg-sky-400/70 rounded-full"></span>
             </div>
 
-            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-2">School Marks Analyzer</h1>
+            <h1 class="text-[clamp(1.5rem,6vw,2.25rem)] sm:text-4xl font-extrabold tracking-tight leading-tight text-white mb-2">School Marks Analyzer</h1>
             <p class="text-sm sm:text-base text-sky-200/90 font-medium mb-8">Welcome to SmartSoft Education Cloud</p>
 
             <!-- 3-Second Progress Bar -->
@@ -197,7 +179,7 @@
                         <path d="M93 123 L81 132 L93 141 M127 123 L139 132 L127 141 M114 120 L106 144" fill="none" stroke="#0b2b6b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight" data-i18n="appTitle">School Marks Analyzer</h2>
+                <h2 class="text-[clamp(1.15rem,4.6vw,1.55rem)] sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug" data-i18n="appTitle">School Marks Analyzer</h2>
             </div>
 
             <!-- School Name & Google Email Inputs -->
@@ -302,7 +284,7 @@
                             <path d="M153 64 C126 43 81 46 64 70 C52 87 64 108 95 112 L125 117 C148 120 158 133 148 149 C133 170 86 172 59 152 L78 134 C97 148 123 148 130 137 C134 130 126 124 112 122 L86 118 C53 112 40 89 54 66 C73 37 125 34 156 56 Z" fill="#0284c7"/>
                         </svg>
                     </div>
-                    <h1 class="dynamic-school-name text-lg sm:text-2xl font-extrabold tracking-tight truncate">School Marks Analyzer</h1>
+                    <h1 class="dynamic-school-name text-[clamp(1rem,3.8vw,1.5rem)] sm:text-xl md:text-2xl font-extrabold tracking-tight leading-snug truncate">School Marks Analyzer</h1>
                 </div>
 
                 <div class="flex items-center flex-wrap justify-center gap-2">
@@ -847,6 +829,19 @@
         <p class="text-sm text-slate-300 max-w-md" data-i18n="securityLockDesc">මෙම පද්ධතියේ කේත පරීක්ෂා කිරීම හෝ පිටපත් කිරීම අවහිර කර ඇත. ඉදිරියට යාමට Developer Tools වසා දමන්න.</p>
     </div>
 
+    <!-- PWA Install Prompt Banner -->
+    <div id="pwaInstallBanner" class="no-print hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 z-[9997] bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 rounded-2xl shadow-2xl p-4 flex items-center gap-3">
+        <img src="SmartSoft_App_Developer_Logo_192x192.png" alt="App Icon" class="w-12 h-12 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0 bg-white object-contain p-0.5">
+        <div class="flex-1 min-w-0">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">School Marks Analyzer</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">පහසුවෙන් භාවිත කිරීමට App එක Install කරන්න.</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" id="btnPwaInstall" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-sm">Install</button>
+            <button type="button" id="btnPwaClose" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold" aria-label="Close">✕</button>
+        </div>
+    </div>
+
     <script>
     (function () {
         'use strict';
@@ -860,26 +855,47 @@
             DB_FILE_NAME: "Marks_Analyzer_DB"
         });
 
-        // Dynamically attach PWA Manifest with custom SmartSoft SVG icon
-        (function attachManifest() {
-            try {
-                const fav = document.getElementById('appFavicon')?.href || '';
-                const manifest = {
-                    name: "School Marks Analyzer",
-                    short_name: "Marks Analyzer",
-                    start_url: ".",
-                    display: "standalone",
-                    background_color: "#0f172a",
-                    theme_color: "#2563eb",
-                    icons: [{ src: fav, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }]
-                };
-                const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = URL.createObjectURL(blob);
-                document.head.appendChild(link);
-            } catch (e) {}
-        })();
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW Error:', err));
+            });
+        }
+
+        // PWA Install Prompt Controller
+        let deferredPrompt = null;
+        const installBanner = document.getElementById('pwaInstallBanner');
+        const btnPwaInstall = document.getElementById('btnPwaInstall');
+        const btnPwaClose = document.getElementById('btnPwaClose');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBanner) installBanner.classList.remove('hidden');
+        });
+
+        if (btnPwaInstall) {
+            btnPwaInstall.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted' && installBanner) {
+                    installBanner.classList.add('hidden');
+                }
+                deferredPrompt = null;
+            });
+        }
+
+        if (btnPwaClose) {
+            btnPwaClose.addEventListener('click', () => {
+                if (installBanner) installBanner.classList.add('hidden');
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            if (installBanner) installBanner.classList.add('hidden');
+            deferredPrompt = null;
+        });
 
         // ============================================================
         // 2. ANTI-COPY & ANTI-TAMPER PROTECTION
