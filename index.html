@@ -288,6 +288,12 @@
                         class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
+                <div id="teacherGasUrlWrap">
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="gasShortLabel">Apps Script Web App URL (/exec)</label>
+                    <input type="url" id="teacherAuthGasUrl" placeholder="https://script.google.com/macros/s/.../exec"
+                        class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-mono outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
                 <div id="teacherPortalStatus" class="text-center text-[11px] font-semibold text-indigo-600 dark:text-sky-400 min-h-[14px]"></div>
 
                 <div class="grid grid-cols-2 gap-2 pt-0.5">
@@ -1537,6 +1543,8 @@
                 installAppDesc: "පහසුවෙන් භාවිත කිරීමට App එක Install කරන්න.",
                 installAppBtn: "Install",
                 gasAutoSyncedToast: "Google Apps Script ස්වයංක්‍රීයව සම්බන්ධ කර යාවත්කාලීන කරන ලදී!",
+                gasShortLabel: "Apps Script Web App URL (/exec)",
+                failedToFetchHint: "Connection අසාර්ථකයි (Failed to fetch). Apps Script Web App එක 'Who has access: Anyone' ලෙස Deploy කර /exec URL එක නිවැරදිව ඇතුළත් කර ඇත්දැයි පරීක්ෂා කරන්න.",
             }),
             en: Object.freeze({
                 appTitle: "School Marks Analyzer",
@@ -1761,6 +1769,8 @@
                 installAppDesc: "Install the App for quick access.",
                 installAppBtn: "Install",
                 gasAutoSyncedToast: "Google Apps Script auto-linked and updated!",
+                gasShortLabel: "Apps Script Web App URL (/exec)",
+                failedToFetchHint: "Failed to fetch. Ensure the Apps Script Web App is deployed with 'Who has access: Anyone' and uses a valid /exec URL.",
             }),
             ta: Object.freeze({
                 appTitle: "பாடசாலை புள்ளிகள் பகுப்பாய்வு",
@@ -1985,6 +1995,8 @@
                 installAppDesc: "விரைவாகப் பயன்படுத்த App ஐ Install செய்யவும்.",
                 installAppBtn: "Install",
                 gasAutoSyncedToast: "Google Apps Script தானாக இணைக்கப்பட்டு புதுப்பிக்கப்பட்டது!",
+                gasShortLabel: "Apps Script Web App URL (/exec)",
+                failedToFetchHint: "Failed to fetch. Apps Script Web App 'Anyone' என Deploy செய்யப்பட்டுள்ளதா எனச் சரிபார்க்கவும்.",
             })
         });
 
@@ -2593,7 +2605,7 @@
                 if (depRes.ok) {
                     const depJson = await depRes.json();
                     const webAppEntry = (depJson.entryPoints || []).find(ep => ep.entryPointType === 'WEB_APP');
-                    if (webAppEntry && webAppEntry.webAi || (webAppEntry && webAppEntry.webApp && webAppEntry.webApp.url)) {
+                    if (webAppEntry && webAppEntry.webApp && webAppEntry.webApp.url) {
                         const execUrl = webAppEntry.webApp.url;
                         appsScriptUrl = execUrl;
                         localStorage.setItem('sma_gasUrl', execUrl);
@@ -2770,12 +2782,24 @@
         async function callGasApi(payload) {
             const url = (appsScriptUrl || '').trim();
             if (!url) throw new Error(t('toastMissingGasUrl'));
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
+            let res;
+            try {
+                res = await fetch(url, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (netErr) {
+                throw new Error(t('failedToFetchHint'));
+            }
+            const rawText = await res.text();
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch {
+                throw new Error(t('failedToFetchHint'));
+            }
             if (!data.ok) throw new Error(data.error || 'Server error');
             return data;
         }
@@ -2836,7 +2860,14 @@
             const teacherId = document.getElementById('teacherAuthId')?.value.trim();
             const phone = document.getElementById('teacherAuthPhone')?.value.trim();
             const password = document.getElementById('teacherAuthPass')?.value.trim();
-            const statusEl = document.getElementById('loginStatus');
+            const typedGasUrl = document.getElementById('teacherAuthGasUrl')?.value.trim();
+            if (typedGasUrl) {
+                appsScriptUrl = typedGasUrl;
+                localStorage.setItem('sma_gasUrl', appsScriptUrl);
+                const sGas = document.getElementById('settingGasUrl');
+                if (sGas) sGas.value = appsScriptUrl;
+            }
+            const statusEl = document.getElementById('teacherPortalStatus') || document.getElementById('loginStatus');
 
             if (!teacherId || !password) {
                 return showToast(t('toastEnterTeacherCreds'), 'warning');
@@ -4683,6 +4714,8 @@
                 showToast(t('toastSaved'), 'success');
             });
             document.getElementById('btnOpenTeacherPortal')?.addEventListener('click', () => {
+                const tGas = document.getElementById('teacherAuthGasUrl');
+                if (tGas) tGas.value = appsScriptUrl || '';
                 document.getElementById('adminLoginBox').classList.add('hidden');
                 document.getElementById('studentSearchBox').classList.add('hidden');
                 document.getElementById('teacherPortalBox').classList.remove('hidden');
