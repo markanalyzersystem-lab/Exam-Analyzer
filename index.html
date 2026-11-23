@@ -8,6 +8,9 @@
     <!-- Custom SmartSoft Apps Developer App Icon (Favicon, Apple Touch Icon & PWA Manifest) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="School Marks Analyzer">
     <link rel="icon" type="image/png" sizes="192x192" id="appFavicon" href="SmartSoft_App_Developer_Logo_192x192.png">
     <link rel="apple-touch-icon" id="appTouchIcon" href="SmartSoft_App_Developer_Logo_192x192.png">
 
@@ -760,7 +763,7 @@
                 </div>
             </div>
             <!-- Bulk Import Card (grades) -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="bulk-import-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
                     <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="bulkGradeTitle">Bulk Import</h3>
                     <div class="flex flex-wrap gap-2">
@@ -850,7 +853,7 @@
 
 
             <!-- Bulk Import Card (students) -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="bulk-import-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
                     <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="bulkStudentTitle">Bulk Import</h3>
                     <div class="flex flex-wrap gap-2">
@@ -914,7 +917,7 @@
                     <select id="filterRegGender" class="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <div class="flex gap-2">
                         <select id="filterRegScholarship" class="flex-1 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
-                        <button type="button" id="btnResetStudentFilters" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold transition" title="Reset">↺</button>
+                        <button type="button" id="btnResetStudentFilters" data-i18n="resetBtn" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold transition">යළි සකසන්න</button>
                     </div>
                 </div>
 
@@ -1024,7 +1027,7 @@
 
 
             <!-- Bulk Import Card (teachers) -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="bulk-import-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
                     <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="bulkTeacherTitle">Bulk Import</h3>
                     <div class="flex flex-wrap gap-2">
@@ -1087,7 +1090,7 @@
                     <select id="filterTeacherClass" class="grade-filter-select px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <div class="flex gap-2">
                         <select id="filterTeacherSubject" class="flex-1 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
-                        <button type="button" id="btnResetTeacherFilters" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold transition" title="Reset">↺</button>
+                        <button type="button" id="btnResetTeacherFilters" data-i18n="resetBtn" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold transition">යළි සකසන්න</button>
                     </div>
                 </div>
 
@@ -1224,27 +1227,43 @@
             });
         }
 
-        // PWA Install Prompt Controller
+        // PWA Install Prompt Controller (Android/Desktop + Apple iOS Support)
         let deferredPrompt = null;
         const installBanner = document.getElementById('pwaInstallBanner');
         const btnPwaInstall = document.getElementById('btnPwaInstall');
         const btnPwaClose = document.getElementById('btnPwaClose');
 
+        const isIosDevice = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
+            window.navigator.standalone === true;
+
+        if (isIosDevice && !isStandaloneMode && installBanner) {
+            setTimeout(() => installBanner.classList.remove('hidden'), 1200);
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (installBanner) installBanner.classList.remove('hidden');
+            if (installBanner && !isStandaloneMode) installBanner.classList.remove('hidden');
         });
 
         if (btnPwaInstall) {
             btnPwaInstall.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted' && installBanner) {
-                    installBanner.classList.add('hidden');
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted' && installBanner) {
+                        installBanner.classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                } else if (isIosDevice) {
+                    await openModal({
+                        title: t('iosInstallTitle'),
+                        message: t('iosInstallMsg'),
+                        confirmText: t('modalConfirm')
+                    });
                 }
-                deferredPrompt = null;
             });
         }
 
@@ -1540,6 +1559,12 @@
                 installAppBtn: "Install",
                 gasAutoSyncedToast: "Google Apps Script ස්වයංක්‍රීයව සම්බන්ධ කර යාවත්කාලීන කරන ලදී!",
                 gasShortLabel: "Apps Script Web App URL (/exec)",
+                iosInstallTitle: "iPhone / iPad (iOS) Install",
+                iosInstallMsg: "Safari இல் Share (⎙) ஐ அழுத்தி \"Add to Home Screen\" என்பதைத் தேர்ந்தெடுக்கவும்.",
+                iosInstallTitle: "iPhone / iPad (iOS) Install",
+                iosInstallMsg: "Tap Share (⎙) in Safari and select \"Add to Home Screen\".",
+                iosInstallTitle: "iPhone / iPad (iOS) Install",
+                iosInstallMsg: "Safari හි පහළ ඇති Share (⎙) බොත්තම ඔබා \"Add to Home Screen\" තෝරන්න.",
                 failedToFetchHint: "Connection අසාර්ථකයි (Failed to fetch). Apps Script Web App එක 'Who has access: Anyone' ලෙස Deploy කර /exec URL එක නිවැරදිව ඇතුළත් කර ඇත්දැයි පරීක්ෂා කරන්න.",
             }),
             en: Object.freeze({
@@ -2281,6 +2306,94 @@
             }
         }
 
+        const SUBJECT_TRANSLATIONS = [
+            { si: 'සිංහල', en: 'Sinhala', ta: 'சிங்களம்' },
+            { si: 'ගණිතය', en: 'Mathematics', ta: 'கணிதம்' },
+            { si: 'විද්‍යාව', en: 'Science', ta: 'விஞ்ஞானம்' },
+            { si: 'ඉංග්‍රීසි', en: 'English', ta: 'ஆங்கிலம்' },
+            { si: 'ඉතිහාසය', en: 'History', ta: 'வரலாறு' },
+            { si: 'භූගෝල විද්‍යාව', en: 'Geography', ta: 'புவியியல்' },
+            { si: 'පුරවැසි අධ්‍යාපනය', en: 'Citizenship Education', ta: 'குடியியல் கல்வி' },
+            { si: 'බුද්ධ ධර්මය', en: 'Buddhism', ta: 'பௌத்தம்' },
+            { si: 'තොරතුරු හා සන්නිවේදන තාක්ෂණය', en: 'ICT', ta: 'தகவல் தொழில்நுட்பம்' },
+            { si: 'ICT', en: 'ICT', ta: 'தகவல் தொழில்நுட்பம்' },
+            { si: 'සෞඛ්‍ය හා ශාරීරික අධ්‍යාපනය', en: 'Health & Physical Education', ta: 'சுகாதாரம் மற்றும் உடற்கல்வி' },
+            { si: 'ව්‍යවසායකත්ව අධ්‍යාපනය', en: 'Entrepreneurship Studies', ta: 'தொழில்முயற்சி கல்வி' },
+            { si: 'චිත්‍ර', en: 'Art', ta: 'சித்திரம்' },
+            { si: 'නර්තනය', en: 'Dancing', ta: 'நடனம்' },
+            { si: 'සංගීතය', en: 'Music', ta: 'சங்கீதம்' }
+        ];
+
+        function translateCurriculumItem(val, targetLang = currentLang) {
+            const raw = String(val || '').trim();
+            if (!raw) return raw;
+            const lang = ['si', 'en', 'ta'].includes(targetLang) ? targetLang : 'si';
+
+            // Match known subject names across any language
+            const subMatch = SUBJECT_TRANSLATIONS.find(item =>
+                [item.si, item.en, item.ta].some(v => v.toLowerCase() === raw.toLowerCase())
+            );
+            if (subMatch) return subMatch[lang];
+
+            // Match grade prefixes like "6 ශ්‍රේණිය", "Grade 6", "தரம் 6"
+            const gradeEn = raw.match(/^Grade\s*(.+)$/i);
+            const gradeSi = raw.match(/^(.+?)\s*ශ්‍රේණිය$/);
+            const gradeTa = raw.match(/^தரம்\s*(.+)$/i);
+            const gCode = gradeEn ? gradeEn[1].trim() : (gradeSi ? gradeSi[1].trim() : (gradeTa ? gradeTa[1].trim() : ''));
+            if (gCode) {
+                if (lang === 'en') return `Grade ${gCode}`;
+                if (lang === 'ta') return `தரம் ${gCode}`;
+                return `${gCode} ශ්‍රේණිය`;
+            }
+
+            return raw;
+        }
+
+        function translateLoadedDataToCurrentLanguage() {
+            let changed = false;
+            if (grades.length > 0) {
+                const nextGrades = grades.map(g => translateCurriculumItem(g, currentLang));
+                const nextMap = {};
+                Object.keys(gradeSubjects).forEach(g => {
+                    const newG = translateCurriculumItem(g, currentLang);
+                    const newSubs = (gradeSubjects[g] || []).map(s => translateCurriculumItem(s, currentLang));
+                    nextMap[newG] = Array.from(new Set([...(nextMap[newG] || []), ...newSubs]));
+                });
+                grades = Array.from(new Set(nextGrades));
+                gradeSubjects = nextMap;
+                changed = true;
+            }
+            if (subjects.length > 0) {
+                subjects = Array.from(new Set(subjects.map(s => translateCurriculumItem(s, currentLang))));
+                changed = true;
+            }
+            registeredStudents.forEach(s => {
+                if (s.grade) s.grade = translateCurriculumItem(s.grade, currentLang);
+            });
+            registeredTeachers.forEach(tc => {
+                if (tc.classTeacher && tc.classTeacher !== 'NONE') {
+                    tc.classTeacher = translateCurriculumItem(tc.classTeacher, currentLang);
+                }
+                if (tc.subjects) {
+                    tc.subjects = tc.subjects.split(',').map(s => translateCurriculumItem(s.trim(), currentLang)).filter(Boolean).join(', ');
+                }
+            });
+            studentsData.forEach(m => {
+                if (m.grade) {
+                    m.grade = translateCurriculumItem(m.grade, currentLang);
+                    m.fullClassName = m.grade;
+                }
+                if (m.marks && typeof m.marks === 'object') {
+                    const nextMarks = {};
+                    Object.entries(m.marks).forEach(([k, v]) => {
+                        nextMarks[translateCurriculumItem(k, currentLang)] = v;
+                    });
+                    m.marks = nextMarks;
+                }
+            });
+            if (changed) saveConfigToLocalCache();
+        }
+
         function setLanguage(lang) {
             if (!I18N[lang]) lang = 'si';
             currentLang = lang;
@@ -2313,6 +2426,7 @@
             const tcBtn = document.getElementById('teacherSubmitBtn');
             if (tcBtn) tcBtn.textContent = editingTeacherId ? t('updateTeacherBtn') : t('saveTeacherBtn');
 
+            translateLoadedDataToCurrentLanguage();
             updateSchoolNameUI(schoolName);
             populateStaticSelectsPreservingState();
             refreshAllDynamicDropdowns(true);
@@ -2677,6 +2791,7 @@
                 }
 
                 currentTeacherSession = null;
+                applyRolePermissions();
                 const badge = document.getElementById('activeUserBadge');
                 if (badge) {
                     const emailVal = document.getElementById('loginGoogleEmail')?.value.trim();
@@ -2885,6 +3000,7 @@
 
                 currentTeacherSession = authRes.user;
                 accessToken = null;
+                applyRolePermissions();
                 await loadAllDataViaGas();
 
                 if (spreadsheetId) {
@@ -2914,11 +3030,15 @@
 
         async function syncSheetTab(sheetName, headers, rows) {
             if (!spreadsheetId && !currentTeacherSession) return;
+            if (currentTeacherSession && ['Settings', 'Config', 'Teachers'].includes(sheetName)) {
+                return;
+            }
             setSyncStatus('syncSaving', '#f59e0b');
             try {
                 if (currentTeacherSession && (appsScriptUrl || '').trim()) {
                     await callGasApi({
                         action: 'syncTab',
+                        role: currentTeacherSession ? 'teacher' : 'admin',
                         tabName: sheetName,
                         headers,
                         rows
@@ -3003,7 +3123,41 @@
         // ============================================================
         // 10. TAB NAVIGATION
         // ============================================================
+        function applyRolePermissions() {
+            const isTeacher = Boolean(currentTeacherSession);
+
+            // 1. Hide/show School Settings tab button & content
+            const settingsTabBtn = document.querySelector('.tab-btn[data-tab="settings"]');
+            const settingsTabPanel = document.getElementById('tab-settings');
+            const tabNavBar = document.getElementById('tabNavBar');
+
+            if (settingsTabBtn) settingsTabBtn.classList.toggle('hidden', isTeacher);
+            if (settingsTabPanel && isTeacher) settingsTabPanel.classList.add('hidden');
+            if (tabNavBar) {
+                tabNavBar.className = isTeacher
+                    ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-6'
+                    : 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-6';
+            }
+
+            // 2. Hide/show all Bulk Upload cards
+            document.querySelectorAll('.bulk-import-card').forEach(card => {
+                card.classList.toggle('hidden', isTeacher);
+            });
+
+            // 3. Hide/show Google Sheet direct open button
+            const openSheetBtn = document.getElementById('btnOpenGoogleSheet');
+            if (openSheetBtn) openSheetBtn.classList.toggle('hidden', isTeacher);
+
+            // If teacher somehow had settings active, redirect to marks tab
+            if (isTeacher && activeTab === 'settings') {
+                openTab('marks');
+            }
+        }
+
         function openTab(tabName) {
+            if (currentTeacherSession && tabName === 'settings') {
+                tabName = 'marks';
+            }
             activeTab = tabName;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById('tab-' + tabName);
@@ -4506,7 +4660,7 @@
             if (type === 'grades') {
                 let configDirty = false;
                 rowsToInsert.forEach(r => {
-                    const gName = getFieldCI(r, ['grade', 'class', 'class_id', 'classid', 'name']) || String(Object.values(r)[0] || '').trim();
+                    const gName = translateCurriculumItem(getFieldCI(r, ['grade', 'class', 'class_id', 'classid', 'name']) || String(Object.values(r)[0] || '').trim(), currentLang);
                     if (!gName) return;
                     if (!grades.includes(gName)) {
                         grades.push(gName);
@@ -4514,7 +4668,7 @@
                     }
                     const rawSubs = getFieldCI(r, ['subjects', 'subject']);
                     if (rawSubs) {
-                        const subList = rawSubs.split(/[|;,]/).map(s => s.trim()).filter(Boolean);
+                        const subList = rawSubs.split(/[|;,]/).map(s => translateCurriculumItem(s.trim(), currentLang)).filter(Boolean);
                         subList.forEach(s => {
                             if (!subjects.includes(s)) subjects.push(s);
                         });
@@ -4536,7 +4690,7 @@
                     if (!admissionNo) return;
                     const fullName = getFieldCI(r, ['fullname', 'full_name', 'name']) || admissionNo;
                     const nameInitials = getFieldCI(r, ['nameinitials', 'name_initials', 'initials']) || fullName;
-                    const grade = getFieldCI(r, ['grade', 'class', 'grade_class']) || (grades[0] || '');
+                    const grade = translateCurriculumItem(getFieldCI(r, ['grade', 'class', 'grade_class']) || (grades[0] || ''), currentLang);
                     const gender = normalizeGender(getFieldCI(r, ['gender', 'sex']));
                     const dob = normalizeDateValue(getFieldCI(r, ['dob', 'dateofbirth', 'birth_date']));
                     const scholarship = normalizeYesNo(getFieldCI(r, ['scholarship']));
@@ -4571,10 +4725,11 @@
                     const schoolAppointDate = normalizeDateValue(getFieldCI(r, ['schoolappointdate', 'school_appoint_date']));
                     const timetableDate = normalizeDateValue(getFieldCI(r, ['timetabledate', 'timetable_date']));
                     const phone = getFieldCI(r, ['phone', 'mobile']).replace(/[\s-]/g, '');
-                    const classTeacher = normalizeClassTeacher(getFieldCI(r, ['classteacher', 'class_teacher']));
+                    const rawCt = getFieldCI(r, ['classteacher', 'class_teacher']);
+                    const classTeacher = normalizeClassTeacher(rawCt) === 'NONE' ? 'NONE' : translateCurriculumItem(normalizeClassTeacher(rawCt), currentLang);
                     const rawSub = getFieldCI(r, ['subjects', 'subject']);
                     const subjectsStr = rawSub
-                        ? rawSub.split(/[|;,]/).map(s => s.trim()).filter(Boolean).join(', ')
+                        ? rawSub.split(/[|;,]/).map(s => translateCurriculumItem(s.trim(), currentLang)).filter(Boolean).join(', ')
                         : '';
 
                     if (subjectsStr) {
@@ -4775,6 +4930,7 @@
                 accessToken = null;
                 spreadsheetId = null;
                 currentTeacherSession = null;
+                applyRolePermissions();
                 document.getElementById('activeUserBadge')?.classList.add('hidden');
                 document.getElementById('mainApp').classList.add('hidden');
                 document.getElementById('loginScreen').classList.remove('hidden');
@@ -4903,6 +5059,7 @@
                 showToast(t('toastSaved'), 'success');
             });
             document.getElementById('btnOpenGoogleSheet')?.addEventListener('click', () => {
+                if (currentTeacherSession) return;
                 if (spreadsheetId) window.open(`https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`, '_blank');
             });
             document.getElementById('btnCopyPortalLink')?.addEventListener('click', () => {
