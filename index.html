@@ -336,10 +336,7 @@
             <h2 class="dynamic-school-name text-lg sm:text-xl font-extrabold text-center text-blue-600 dark:text-sky-400 mb-3" data-i18n="studentResultsPortal">ශිෂ්‍ය ප්‍රතිඵල බලන්න</h2>
 
             <div class="space-y-2.5">
-                <div id="portalSheetIdBox">
-                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="portalSheetIdLabel">Google Sheet ID</label>
-                    <input type="text" id="portalSheetIdInput" data-i18n-placeholder="portalSheetIdPlaceholder" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+<input type="hidden" id="portalSheetIdInput">
 
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="selectTerm">වාරය තෝරන්න</label>
@@ -2666,6 +2663,9 @@
                     await syncSheetTab('Settings', ['Key', 'Value'], [['schoolName', typedSchool]]);
                 }
 
+                localStorage.setItem('sma_linkedSheetId', spreadsheetId);
+                const pInp = document.getElementById('portalSheetIdInput');
+                if (pInp) pInp.value = spreadsheetId;
                 const portalUrl = `${window.location.origin}${window.location.pathname}?sheet=${spreadsheetId}`;
                 document.getElementById('studentPortalLinkBox').value = portalUrl;
 
@@ -2804,7 +2804,12 @@
         }
 
         function applyBundleDataToState(bundle) {
-            if (bundle.spreadsheetId) spreadsheetId = bundle.spreadsheetId;
+            if (bundle.spreadsheetId) {
+                spreadsheetId = bundle.spreadsheetId;
+                localStorage.setItem('sma_linkedSheetId', spreadsheetId);
+                const pInp = document.getElementById('portalSheetIdInput');
+                if (pInp) pInp.value = spreadsheetId;
+            }
 
             const nameRow = (bundle.settings || []).find(r => r[0] === 'schoolName');
             if (nameRow && nameRow[1]) updateSchoolNameUI(nameRow[1]);
@@ -4180,18 +4185,35 @@
             } catch (e) {}
         }
 
+        function getAutoLinkedSheetId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromUrl = extractCleanSheetId(urlParams.get('sheet') || '');
+            const fromInput = extractCleanSheetId(document.getElementById('portalSheetIdInput')?.value || '');
+            const fromState = extractCleanSheetId(spreadsheetId || '');
+            const fromStorage = extractCleanSheetId(localStorage.getItem('sma_linkedSheetId') || '');
+            const resolved = fromUrl || fromState || fromStorage || fromInput;
+            if (resolved) {
+                localStorage.setItem('sma_linkedSheetId', resolved);
+                const pInp = document.getElementById('portalSheetIdInput');
+                if (pInp) pInp.value = resolved;
+            }
+            return resolved;
+        }
+
         async function searchInPortal() {
-            const rawSheetId = document.getElementById('portalSheetIdInput').value;
-            const sheetId = extractCleanSheetId(rawSheetId);
-            document.getElementById('portalSheetIdInput').value = sheetId;
+            const sheetId = getAutoLinkedSheetId();
 
             const id = document.getElementById('portalSearchInput').value.trim();
             const dob = normalizeDateValue(document.getElementById('portalDobInput').value.trim());
             const term = document.getElementById('portalTermSelect').value || 'T1';
             const resDiv = document.getElementById('portalSearchResults');
 
-            if (!sheetId || !id || !dob) {
+            if (!id || !dob) {
                 resDiv.innerHTML = `<p class="text-xs sm:text-sm text-rose-500 text-center font-semibold">${escapeHtml(t('toastFillAllPortal'))}</p>`;
+                return;
+            }
+            if (!sheetId) {
+                resDiv.innerHTML = `<p class="text-xs sm:text-sm text-rose-500 text-center font-semibold">${escapeHtml(t('portalFetchError'))}</p>`;
                 return;
             }
             resDiv.innerHTML = `<p class="text-xs sm:text-sm text-blue-600 dark:text-sky-400 text-center font-semibold">${escapeHtml(t('portalSearching'))}</p>`;
@@ -4927,12 +4949,16 @@
             if (gasInputInit) gasInputInit.value = appsScriptUrl;
             const rawUrlSheetId = urlParams.get('sheet');
             const urlSheetId = extractCleanSheetId(rawUrlSheetId);
+            const savedSheetId = extractCleanSheetId(localStorage.getItem('sma_linkedSheetId') || '');
+            const activePortalSheetId = urlSheetId || savedSheetId;
+            if (activePortalSheetId) {
+                const pInp = document.getElementById('portalSheetIdInput');
+                if (pInp) pInp.value = activePortalSheetId;
+                loadPublicSchoolName(activePortalSheetId);
+            }
             if (urlSheetId) {
-                document.getElementById('portalSheetIdInput').value = urlSheetId;
-                document.getElementById('portalSheetIdBox').classList.add('hidden');
                 document.getElementById('adminLoginBox').classList.add('hidden');
                 document.getElementById('studentSearchBox').classList.remove('hidden');
-                loadPublicSchoolName(urlSheetId);
             }
 
             // Initialize Google API Client
