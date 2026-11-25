@@ -825,7 +825,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="gender">ස්ත්‍රී/පුරුෂ</label>
-                            <select id="reg_gender" required class="gender-select w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none"></select>
+                            <select id="reg_gender" class="gender-select w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="dob">උපන් දිනය</label>
@@ -833,15 +833,15 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="scholarship">ශිෂ්‍යත්ව ලාභියෙක් ද?</label>
-                            <select id="reg_scholarship" required class="yesno-select w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none"></select>
+                            <select id="reg_scholarship" class="yesno-select w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none"></select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="address">ලිපිනය</label>
-                            <input type="text" id="reg_address" data-i18n-placeholder="addressPlaceholder" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none">
+                            <input type="text" id="reg_address" data-i18n-placeholder="addressPlaceholder" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="phone">දුරකථන අංකය</label>
-                            <input type="tel" id="reg_phone" data-i18n-placeholder="phonePlaceholder" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none">
+                            <input type="tel" id="reg_phone" data-i18n-placeholder="phonePlaceholder" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none">
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-3">
@@ -3993,11 +3993,17 @@
 
         async function submitStudentForm(e) {
             e.preventDefault();
-            const phone = document.getElementById('reg_phone').value.trim().replace(/[\s-]/g, '');
-            if (!/^\d{10}$/.test(phone)) return showToast(t('toastInvalidPhone'), 'warning');
-
+            const admNo = document.getElementById('reg_admNo').value.trim();
+            const fullName = document.getElementById('reg_fullName').value.trim();
+            const initialName = document.getElementById('reg_initialName').value.trim();
             const grade = document.getElementById('reg_grade').value;
-            if (!grade) return showToast(t('selectGrade'), 'warning');
+            const dob = document.getElementById('reg_dob').value;
+            const phone = document.getElementById('reg_phone').value.trim().replace(/[\s-]/g, '');
+
+            if (!admNo || (!fullName && !initialName) || !grade || !dob) {
+                return showToast(t('toastFillAllPortal'), 'warning');
+            }
+            if (phone && !/^\d{10}$/.test(phone)) return showToast(t('toastInvalidPhone'), 'warning');
 
             const obj = {
                 admissionNo: document.getElementById('reg_admNo').value.trim(),
@@ -4062,7 +4068,7 @@
                 <td class="p-2.5">${escapeHtml(s.grade)}</td>
                 <td class="p-2.5">${escapeHtml(s.dob || '-')}</td>
                 <td class="p-2.5">${escapeHtml(displayYesNo(s.scholarship))}</td>
-                <td class="p-2.5">${escapeHtml(s.phone)}</td>
+                <td class="p-2.5">${escapeHtml(s.phone || '-')}</td>
                 <td class="p-2.5 hide-in-pdf">
                     <div class="inline-flex gap-1.5">
                         <button type="button" class="btn-edit-student px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold" data-id="${escapeHtml(s.admissionNo)}">${escapeHtml(t('editBtn'))}</button>
