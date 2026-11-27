@@ -107,6 +107,45 @@
         .pdf-mode td { border: 1px solid #334155 !important; background: #ffffff !important; padding: 5px 5px !important; }
         .pdf-mode tr:nth-child(even) td { background: #f8fafc !important; }
         .pdf-mode .overflow-x-auto { overflow: visible !important; border: none !important; }
+        .pdf-mode .pdf-page-break { page-break-before: always !important; break-before: page !important; margin-top: 12px !important; }
+        .pdf-mode .subject-highlight-th { background: #fef08a !important; color: #713f12 !important; border: 2px solid #ca8a04 !important; font-weight: 800 !important; }
+        .pdf-mode .subject-highlight-td { background: #fef9c3 !important; color: #713f12 !important; font-weight: 800 !important; border: 1.5px solid #ca8a04 !important; }
+        .pdf-mode .gender-group-row td { background: #e0f2fe !important; color: #0c4a6e !important; font-weight: 800 !important; text-align: left !important; }
+
+        /* Subject Filter Highlight */
+        .subject-highlight-th {
+            background: #fef08a !important;
+            color: #713f12 !important;
+            box-shadow: inset 0 0 0 2px #eab308;
+            font-weight: 800 !important;
+        }
+        .dark .subject-highlight-th {
+            background: rgba(234, 179, 8, 0.35) !important;
+            color: #fef08a !important;
+            box-shadow: inset 0 0 0 2px #facc15;
+        }
+        .subject-highlight-td {
+            background: #fef9c3 !important;
+            color: #713f12 !important;
+            font-weight: 800 !important;
+            box-shadow: inset 0 0 0 1px rgba(202, 138, 4, 0.45);
+        }
+        .dark .subject-highlight-td {
+            background: rgba(234, 179, 8, 0.22) !important;
+            color: #fde047 !important;
+            font-weight: 800 !important;
+        }
+        .gender-group-row td {
+            background: #eff6ff;
+            color: #1e40af;
+            font-weight: 800;
+            text-align: left;
+            padding: 7px 12px !important;
+        }
+        .dark .gender-group-row td {
+            background: rgba(30, 58, 138, 0.35);
+            color: #93c5fd;
+        }
 
         @media print {
             @page { size: A4 landscape; margin: 10mm 12mm; }
@@ -118,7 +157,10 @@
             .tab-content { display: none !important; }
             body[data-print-target="rank"] #tab-marks,
             body[data-print-target="analysis-marks"] #tab-analysis,
+            body[data-print-target="analysis-stats"] #tab-analysis,
             body[data-print-target="analysis-master"] #tab-analysis,
+            body[data-print-target="analysis-full"] #tab-analysis,
+            body[data-print-target="admin-search"] #tab-marks,
             body[data-print-target="students-list"] #tab-students,
             body[data-print-target="teachers-list"] #tab-teachers,
             body[data-print-target="portal-result"] #loginScreen,
@@ -132,12 +174,25 @@
                 display: none !important;
             }
             body[data-print-target="rank"] #tab-marks > *:not(#reportCard),
-            body[data-print-target="analysis-marks"] #tab-analysis > *:not(#analysisMarksListCard),
-            body[data-print-target="analysis-master"] #tab-analysis > *:not(#analysisMasterCard),
+            body[data-print-target="admin-search"] #tab-marks > *:not(#adminSearchCard),
+            body[data-print-target="analysis-marks"] #tab-analysis > *:not(#analysisFullReportContainer),
+            body[data-print-target="analysis-marks"] #analysisFullReportContainer > *:not(#analysisMarksListCard),
+            body[data-print-target="analysis-stats"] #tab-analysis > *:not(#analysisFullReportContainer),
+            body[data-print-target="analysis-stats"] #analysisFullReportContainer > *:not(#analysisSubjectStatsCard),
+            body[data-print-target="analysis-master"] #tab-analysis > *:not(#analysisFullReportContainer),
+            body[data-print-target="analysis-master"] #analysisFullReportContainer > *:not(#analysisMasterCard),
+            body[data-print-target="analysis-full"] #tab-analysis > *:not(#analysisFullReportContainer),
             body[data-print-target="students-list"] #tab-students > *:not(#studentsListCard),
             body[data-print-target="teachers-list"] #tab-teachers > *:not(#teachersListCard) {
                 display: none !important;
             }
+            body[data-print-target="analysis-full"] .pdf-page-break {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+            .subject-highlight-th { background: #fef08a !important; color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .subject-highlight-td { background: #fef9c3 !important; color: #000000 !important; font-weight: 800 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .gender-group-row td { background: #e0f2fe !important; color: #000000 !important; font-weight: 800 !important; text-align: left !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .print-header { display: block !important; text-align: center; margin-bottom: 10px; }
             .print-footer { display: block !important; margin-top: 22px; page-break-inside: avoid; }
             .card-printable { border: none !important; box-shadow: none !important; padding: 0 !important; background: #ffffff !important; }
@@ -398,6 +453,10 @@
                         <button type="button" data-lang-btn="en" class="lang-btn-header px-2.5 py-1 rounded-lg text-xs font-semibold transition">EN</button>
                         <button type="button" data-lang-btn="ta" class="lang-btn-header px-2.5 py-1 rounded-lg text-xs font-semibold transition">தமிழ்</button>
                     </div>
+                    <button type="button" id="btnSyncNow" class="px-3 py-2 rounded-xl bg-emerald-500/90 hover:bg-emerald-600 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5" title="Synchronize Data">
+                        <span>🔄</span>
+                        <span data-i18n="syncNowBtn">Sync</span>
+                    </button>
                     <button type="button" id="themeToggleApp" class="w-9 h-9 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-base transition" aria-label="Toggle Theme">🌙</button>
                     <button type="button" id="btnLogout" class="px-3.5 py-2 rounded-xl bg-rose-500/90 hover:bg-rose-600 text-white text-xs font-bold shadow-sm transition flex items-center gap-1.5">
                         <span>🚪</span>
@@ -540,11 +599,20 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 mb-4 no-print">
+                <!-- Visible Result Metadata Banner (School, Term, Grade & Gender Count) -->
+                <div class="mb-3 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-800/70 border border-blue-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
+                    <div class="font-bold text-slate-800 dark:text-sky-300">
+                        🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="rankVisibleMeta"></span>
+                    </div>
+                    <div id="rankGenderSummary" class="font-semibold text-blue-700 dark:text-sky-400"></div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 mb-4 no-print">
                     <select id="tableTermSelect" class="term-select px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="tableGradeSelect" class="grade-select px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="filterSubject" class="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="filterCondition" class="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
+                    <select id="rankGenderGroup" class="gender-group-select px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <button type="button" id="btnResetRankFilters" class="px-3 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs sm:text-sm font-bold transition" data-i18n="resetBtn">යළි සකසන්න</button>
                 </div>
 
@@ -573,7 +641,7 @@
             </div>
 
             <!-- Search Student Marks Card -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <div id="adminSearchCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
                 <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white pb-3 mb-4 border-b border-slate-200 dark:border-slate-800" data-i18n="searchMarksTitle">ශිෂ්‍ය ප්‍රතිඵල සෙවීම</h3>
                 <div class="flex flex-col sm:flex-row gap-2.5">
                     <input type="text" id="searchIdInput" data-i18n-placeholder="searchIdPlaceholder" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
@@ -601,19 +669,52 @@
         <!-- ==================== TAB 2: RESULT ANALYZING ==================== -->
         <div id="tab-analysis" class="tab-content hidden space-y-6">
 
-            <!-- Shared Filter Bar -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm no-print">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+            <!-- Shared Filter & Full Report Controls Bar -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3 no-print">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="selectTerm">වාරය</label>
-                        <select id="analysisTermSelect" class="term-select w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        <select id="analysisTermSelect" class="term-select w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="selectGrade">ශ්‍රේණිය</label>
-                        <select id="analysisGradeSelect" class="grade-select w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        <select id="analysisGradeSelect" class="grade-select w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="filterHighlightSubjectLabel">විෂය Highlight</label>
+                        <select id="analysisFilterSubject" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-amber-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="genderViewLabel">ස්ත්‍රී/පුරුෂ පෙන්වීම</label>
+                        <select id="analysisGenderGroup" class="gender-group-select w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="passThresholdLabel">සමත් සීමාව (40%+)</label>
+                        <select id="analysisPassThreshold" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none">
+                            <option value="gte40" selected>≥ 40% (40 හෝ වැඩි)</option>
+                            <option value="gt40">&gt; 40% (40 ට වැඩි)</option>
+                            <option value="gte35">≥ 35% (35 හෝ වැඩි)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Separate Pass % Option Toggle + Complete Report Print/PDF -->
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 cursor-pointer text-xs sm:text-sm font-bold text-indigo-700 dark:text-indigo-300">
+                            <input type="checkbox" id="toggleSatPassPercentOption" checked class="w-4 h-4 rounded accent-indigo-600">
+                            <span data-i18n="satPassPercentOptionLabel">පෙනී සිටි පිරිස හා සමත් ප්‍රතිශතය (40%+) පෙන්වන්න</span>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" id="btnPrintFullAnalysis" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow-sm transition">🖨️ <span data-i18n="printFullResultBtn">සම්පූර්ණ ප්‍රතිඵලය මුද්‍රණය</span></button>
+                        <button type="button" id="btnPdfFullAnalysis" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold shadow-sm transition">📄 <span data-i18n="pdfFullResultBtn">සම්පූර්ණ ප්‍රතිඵලය PDF</span></button>
                     </div>
                 </div>
             </div>
+
+            <!-- Full Printable Analysis Report Wrapper -->
+            <div id="analysisFullReportContainer" class="space-y-6">
 
             <!-- Card 1 (ABOVE Master Marksheet): Student Marks & Rank List -->
             <div id="analysisMarksListCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
@@ -634,6 +735,10 @@
                     </div>
                 </div>
 
+                <div class="mb-3 p-2.5 rounded-xl bg-blue-50/80 dark:bg-slate-800/70 border border-blue-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
+                    <div class="font-bold text-slate-800 dark:text-sky-300">🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="analysisMarksVisibleMeta"></span></div>
+                    <div id="analysisMarksGenderSummary" class="font-semibold text-blue-700 dark:text-sky-400"></div>
+                </div>
                 <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
                     <table class="w-full text-xs sm:text-sm text-center border-collapse">
                         <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisMarksHeadRow"></tr></thead>
@@ -658,8 +763,49 @@
                 </div>
             </div>
 
+            <!-- Card 1B: Subject-wise 40%+ & Sat Pass Percentage Analysis -->
+            <div id="analysisSubjectStatsCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
+                    <h4 class="text-sm font-bold mt-0.5" data-i18n="subjectAnalysisTitle">විෂය අනුව ප්‍රතිඵල විශ්ලේෂණය (40%+ සහ සමත් ප්‍රතිශතය)</h4>
+                    <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
+                        <span id="printAnalysisStatsSubHeader"></span>
+                        <span class="print-date-stamp"></span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 no-print">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="subjectAnalysisTitle">විෂය අනුව ප්‍රතිඵල විශ්ලේෂණය (40%+ සහ සමත් ප්‍රතිශතය)</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" id="btnPrintAnalysisStats" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printBtn">මුද්‍රණය</span></button>
+                        <button type="button" id="btnPdfAnalysisStats" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
+                    </div>
+                </div>
+
+                <div class="mb-3 p-2.5 rounded-xl bg-indigo-50/80 dark:bg-slate-800/70 border border-indigo-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
+                    <div class="font-bold text-slate-800 dark:text-sky-300">🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="analysisStatsVisibleMeta"></span></div>
+                    <div id="analysisStatsOverallPills" class="font-bold text-indigo-700 dark:text-indigo-300"></div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                    <table class="w-full text-xs sm:text-sm text-center border-collapse">
+                        <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisStatsHeadRow"></tr></thead>
+                        <tbody id="analysisStatsBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+                    </table>
+                </div>
+
+                <div class="print-footer hidden pt-6 text-xs">
+                    <div class="grid grid-cols-3 gap-8 text-center pt-4">
+                        <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div></div>
+                        <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div></div>
+                        <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div></div>
+                    </div>
+                    <div class="text-center text-[10px] text-slate-600 mt-3">School Marks Analyzer | SmartSoft Education Cloud</div>
+                </div>
+            </div>
+
             <!-- Card 2 (BELOW): Master Marksheet (A/B/C/S/W) -->
-            <div id="analysisMasterCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <div id="analysisMasterCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="masterMarksheetTitle"></h4>
@@ -699,6 +845,7 @@
                         School Marks Analyzer | SmartSoft Education Cloud
                     </div>
                 </div>
+            </div>
             </div>
         </div>
 
@@ -794,6 +941,8 @@
                     <button type="button" id="btnBulkSample_grades" class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm transition" data-i18n="bulkSampleBtn">ආදර්ශ දත්ත</button>
                     <button type="button" id="btnBulkCheck_grades" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm transition" data-i18n="bulkCheckBtn">🔍 Duplicate Check & Preview</button>
                     <button type="button" id="btnBulkSave_grades" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkSaveBtn">📥 Bulk දත්ත සුරකින්න</button>
+                    <button type="button" id="btnBulkUndoLast_grades" class="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkUndoLastBtn">🗑️ අවසන් Bulk මකන්න</button>
+                    <button type="button" id="btnBulkDeleteAll_grades" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkDeleteAllBtn">🗑️ සියල්ල එකවර මකන්න</button>
                 </div>
 
                 <div id="bulkStatus_grades" class="hidden px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"></div>
@@ -884,6 +1033,8 @@
                     <button type="button" id="btnBulkSample_students" class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm transition" data-i18n="bulkSampleBtn">ආදර්ශ දත්ත</button>
                     <button type="button" id="btnBulkCheck_students" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm transition" data-i18n="bulkCheckBtn">🔍 Duplicate Check & Preview</button>
                     <button type="button" id="btnBulkSave_students" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkSaveBtn">📥 Bulk දත්ත සුරකින්න</button>
+                    <button type="button" id="btnBulkUndoLast_students" class="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkUndoLastBtn">🗑️ අවසන් Bulk මකන්න</button>
+                    <button type="button" id="btnBulkDeleteAll_students" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkDeleteAllBtn">🗑️ සියල්ල එකවර මකන්න</button>
                 </div>
 
                 <div id="bulkStatus_students" class="hidden px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"></div>
@@ -1058,6 +1209,8 @@
                     <button type="button" id="btnBulkSample_teachers" class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm transition" data-i18n="bulkSampleBtn">ආදර්ශ දත්ත</button>
                     <button type="button" id="btnBulkCheck_teachers" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm transition" data-i18n="bulkCheckBtn">🔍 Duplicate Check & Preview</button>
                     <button type="button" id="btnBulkSave_teachers" class="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkSaveBtn">📥 Bulk දත්ත සුරකින්න</button>
+                    <button type="button" id="btnBulkUndoLast_teachers" class="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkUndoLastBtn">🗑️ අවසන් Bulk මකන්න</button>
+                    <button type="button" id="btnBulkDeleteAll_teachers" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm shadow-sm transition" data-i18n="bulkDeleteAllBtn">🗑️ සියල්ල එකවර මකන්න</button>
                 </div>
 
                 <div id="bulkStatus_teachers" class="hidden px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold"></div>
@@ -1156,6 +1309,15 @@
                     <div class="flex flex-col sm:flex-row gap-2.5">
                         <input type="text" id="studentPortalLinkBox" readonly class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-mono text-blue-700 dark:text-sky-400 outline-none">
                         <button type="button" id="btnCopyPortalLink" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition">📋 <span data-i18n="copyLinkBtn">සබැඳිය පිටපත් කරන්න</span></button>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2" data-i18n="teacherPortalLinkTitle">ගුරු පිවිසුම් සහ සමමුහුර්ත සබැඳිය (Teacher Sync Link)</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-3" data-i18n="teacherPortalLinkDesc">ගුරුවරුන්ට Admin ඇතුළත් කළ දත්ත සමඟම එකම Google Sheet එකට සම්බන්ධ වීමට මෙම සබැඳිය බෙදා ගන්න.</p>
+                    <div class="flex flex-col sm:flex-row gap-2.5">
+                        <input type="text" id="teacherPortalLinkBox" readonly class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-mono text-indigo-700 dark:text-indigo-400 outline-none">
+                        <button type="button" id="btnCopyTeacherLink" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">📋 <span data-i18n="copyLinkBtn">සබැඳිය පිටපත් කරන්න</span></button>
                     </div>
                 </div>
             </div>
@@ -1566,6 +1728,43 @@
                 iosInstallTitle: "iPhone / iPad (iOS) Install",
                 iosInstallMsg: "Safari හි පහළ ඇති Share (⎙) බොත්තම ඔබා \"Add to Home Screen\" තෝරන්න.",
                 failedToFetchHint: "Connection අසාර්ථකයි (Failed to fetch). Apps Script Web App එක 'Who has access: Anyone' ලෙස Deploy කර /exec URL එක නිවැරදිව ඇතුළත් කර ඇත්දැයි පරීක්ෂා කරන්න.",
+                syncNowBtn: "දත්ත Sync",
+                filterHighlightSubjectLabel: "විෂය අනුව Highlight",
+                genderViewLabel: "ගැහැණු / පිරිමි වෙන්කිරීම",
+                genderSeparateOpt: "පිරිමි / ගැහැණු වෙන්කර",
+                genderCombinedOpt: "සියල්ල (ස්ථානය අනුව)",
+                genderMaleOnlyOpt: "පිරිමි පමණි",
+                genderFemaleOnlyOpt: "ගැහැණු පමණි",
+                genderGroupMale: "👦 පිරිමි සිසුන්",
+                genderGroupFemale: "👧 ගැහැණු සිසුන්",
+                genderGroupUnknown: "👤 ස්ත්‍රී/පුරුෂ සඳහන් නැති",
+                passThresholdLabel: "සමත් සීමාව (40%+)",
+                satPassPercentOptionLabel: "පෙනී සිටි පිරිස හා සමත් ප්‍රතිශතය (40%+) වෙනම පෙන්වන්න",
+                printFullResultBtn: "සම්පූර්ණ ප්‍රතිඵලය මුද්‍රණය",
+                pdfFullResultBtn: "සම්පූර්ණ ප්‍රතිඵලය PDF",
+                subjectAnalysisTitle: "විෂය අනුව ප්‍රතිඵල විශ්ලේෂණය (40%+ සහ පෙනී සිටි සමත් %)",
+                colRegistered: "ලියාපදිංචි",
+                colSat: "පෙනී සිටි",
+                colAbsent: "නොපැමිණි",
+                colOver40: "40%+ ගණන",
+                colPassPctSat: "පෙනී සිටි සමත් %",
+                colSubAvg: "සාමාන්‍යය",
+                overallSummaryRow: "සමස්ත සාරාංශය",
+                bulkUndoLastBtn: "🗑️ අවසන් Bulk මකන්න",
+                bulkDeleteAllBtn: "🗑️ සියල්ල එකවර මකන්න",
+                bulkNoLastBatch: "මකා දැමීමට අවසන් Bulk Upload දත්ත කිසිවක් නොමැත.",
+                bulkUndoConfirmTitle: "අවසන් Bulk Upload දත්ත මකා දැමීම",
+                bulkUndoConfirmMsg: "අවසන් Bulk Upload මගින් එක් කළ වාර්තා {count} ක් එකවර ස්ථිරවම මකා දැමීමට අවශ්‍යද?",
+                bulkDeleteAllConfirmTitle: "සියලුම දත්ත එකවර මකා දැමීම",
+                bulkDeleteAllConfirmMsg: "මෙම කොටසේ ඇති සියලුම වාර්තා ({count} ක්) එකවර ස්ථිරවම මකා දැමීමට අවශ්‍යද?",
+                bulkDeletedCountMsg: "වාර්තා {count} ක් එකවර සාර්ථකව මකා දමන ලදී!",
+                autoDedupRemovedToast: "🧹 Duplicate වාර්තා {count} ක් ස්වයංක්‍රීයව මකා දමන ලදී!",
+                teacherPortalLinkTitle: "ගුරු පිවිසුම් සහ සමමුහුර්ත සබැඳිය (Teacher Sync Link)",
+                teacherPortalLinkDesc: "ගුරුවරුන්ට Admin ඇතුළත් කළ දත්ත සමඟම එකම Google Sheet එකට සම්බන්ධ වීමට මෙම සබැඳිය බෙදා ගන්න.",
+                labelSchool: "පාසල",
+                labelTerm: "වාරය",
+                labelGrade: "ශ්‍රේණිය",
+                syncSuccessToast: "දත්ත සාර්ථකව සමමුහුර්ත (Sync) කරන ලදී!",
             }),
             en: Object.freeze({
                 appTitle: "School Marks Analyzer",
@@ -1792,6 +1991,43 @@
                 gasAutoSyncedToast: "Google Apps Script auto-linked and updated!",
                 gasShortLabel: "Apps Script Web App URL (/exec)",
                 failedToFetchHint: "Failed to fetch. Ensure the Apps Script Web App is deployed with 'Who has access: Anyone' and uses a valid /exec URL.",
+                syncNowBtn: "Sync Data",
+                filterHighlightSubjectLabel: "Highlight Subject",
+                genderViewLabel: "Gender Grouping",
+                genderSeparateOpt: "Separate Male / Female",
+                genderCombinedOpt: "All (By Rank)",
+                genderMaleOnlyOpt: "Male Only",
+                genderFemaleOnlyOpt: "Female Only",
+                genderGroupMale: "👦 Male Students",
+                genderGroupFemale: "👧 Female Students",
+                genderGroupUnknown: "👤 Gender Unspecified",
+                passThresholdLabel: "Pass Threshold (40%+)",
+                satPassPercentOptionLabel: "Show Sat Count & Pass Percentage (40%+) Analysis",
+                printFullResultBtn: "Print Complete Result",
+                pdfFullResultBtn: "Complete Result PDF",
+                subjectAnalysisTitle: "Subject-wise Result Analysis (40%+ & Sat Pass %)",
+                colRegistered: "Registered",
+                colSat: "Sat",
+                colAbsent: "Absent",
+                colOver40: "40%+ Count",
+                colPassPctSat: "Pass % (of Sat)",
+                colSubAvg: "Average",
+                overallSummaryRow: "Overall Summary",
+                bulkUndoLastBtn: "🗑️ Delete Last Bulk",
+                bulkDeleteAllBtn: "🗑️ Delete All at Once",
+                bulkNoLastBatch: "No recent bulk upload batch found to delete.",
+                bulkUndoConfirmTitle: "Delete Last Bulk Upload",
+                bulkUndoConfirmMsg: "Are you sure you want to permanently delete all {count} records added in the last bulk upload?",
+                bulkDeleteAllConfirmTitle: "Delete All Records",
+                bulkDeleteAllConfirmMsg: "Are you sure you want to permanently delete all {count} records in this section at once?",
+                bulkDeletedCountMsg: "Successfully deleted {count} records at once!",
+                autoDedupRemovedToast: "🧹 Automatically removed {count} duplicate record(s)!",
+                teacherPortalLinkTitle: "Teacher Login & Sync Link",
+                teacherPortalLinkDesc: "Share this link with teachers so they connect and synchronize directly with this exact same Google Sheet.",
+                labelSchool: "School",
+                labelTerm: "Term",
+                labelGrade: "Grade",
+                syncSuccessToast: "Data synchronized successfully!",
             }),
             ta: Object.freeze({
                 appTitle: "பாடசாலை புள்ளிகள் பகுப்பாய்வு",
@@ -2018,6 +2254,43 @@
                 gasAutoSyncedToast: "Google Apps Script தானாக இணைக்கப்பட்டு புதுப்பிக்கப்பட்டது!",
                 gasShortLabel: "Apps Script Web App URL (/exec)",
                 failedToFetchHint: "Failed to fetch. Apps Script Web App 'Anyone' என Deploy செய்யப்பட்டுள்ளதா எனச் சரிபார்க்கவும்.",
+                syncNowBtn: "ஒத்திசை (Sync)",
+                filterHighlightSubjectLabel: "பாட Highlight",
+                genderViewLabel: "ஆண் / பெண் பிரிப்பு",
+                genderSeparateOpt: "ஆண் / பெண் தனித்தனியாக",
+                genderCombinedOpt: "அனைத்தும் (நிலை வாரியாக)",
+                genderMaleOnlyOpt: "ஆண்கள் மட்டும்",
+                genderFemaleOnlyOpt: "பெண்கள் மட்டும்",
+                genderGroupMale: "👦 ஆண் மாணவர்கள்",
+                genderGroupFemale: "👧 பெண் மாணவிகள்",
+                genderGroupUnknown: "👤 பால்நிலை குறிப்பிடப்படாதவை",
+                passThresholdLabel: "சித்தி எல்லை (40%+)",
+                satPassPercentOptionLabel: "தோற்றியோர் எண்ணிக்கை & சித்தி வீதம் (40%+) தனியாகக் காட்டு",
+                printFullResultBtn: "முழுப் பெறுபேற்றை அச்சிடு",
+                pdfFullResultBtn: "முழுப் பெறுபேறு PDF",
+                subjectAnalysisTitle: "பாடவாரியான பெறுபேறு பகுப்பாய்வு (40%+ & சித்தி %)",
+                colRegistered: "பதிவு",
+                colSat: "தோற்றியோர்",
+                colAbsent: "வராதோர்",
+                colOver40: "40%+ எண்ணிக்கை",
+                colPassPctSat: "தோற்றியோர் சித்தி %",
+                colSubAvg: "சராசரி",
+                overallSummaryRow: "மொத்த சுருக்கம்",
+                bulkUndoLastBtn: "🗑️ இறுதி Bulk நீக்கு",
+                bulkDeleteAllBtn: "🗑️ அனைத்தையும் நீக்கு",
+                bulkNoLastBatch: "நீக்குவதற்கு இறுதி Bulk Upload தரவுகள் இல்லை.",
+                bulkUndoConfirmTitle: "இறுதி Bulk Upload தரவுகளை நீக்குதல்",
+                bulkUndoConfirmMsg: "இறுதி Bulk Upload மூலம் சேர்க்கப்பட்ட {count} பதிவுகளையும் ஒரே நேரத்தில் நீக்க விரும்புகிறீர்களா?",
+                bulkDeleteAllConfirmTitle: "அனைத்து தரவுகளையும் நீக்குதல்",
+                bulkDeleteAllConfirmMsg: "இந்தப் பிரிவில் உள்ள அனைத்து {count} பதிவுகளையும் ஒரே நேரத்தில் நீக்க விரும்புகிறீர்களா?",
+                bulkDeletedCountMsg: "{count} பதிவுகள் ஒரே நேரத்தில் வெற்றிகரமாக நீக்கப்பட்டன!",
+                autoDedupRemovedToast: "🧹 {count} நகல் (Duplicate) பதிவுகள் தானாக நீக்கப்பட்டன!",
+                teacherPortalLinkTitle: "ஆசிரியர் உள்நுழைவு & ஒத்திசைவு இணைப்பு",
+                teacherPortalLinkDesc: "ஆசிரியர்கள் Admin உள்ளிட்ட அதே Google Sheet உடன் நேரடியாக இணைய இந்த இணைப்பைப் பகிரவும்.",
+                labelSchool: "பாடசாலை",
+                labelTerm: "தவணை",
+                labelGrade: "தரம்",
+                syncSuccessToast: "தரவுகள் வெற்றிகரமாக ஒத்திசைக்கப்பட்டன!",
             })
         });
 
@@ -2076,7 +2349,14 @@
         }
 
         function displayGender(raw) {
+            if (!raw) return '-';
             return normalizeGender(raw) === 'F' ? t('female') : t('male');
+        }
+
+        function getStudentGender(admNo) {
+            const key = String(admNo || '').trim().toLowerCase();
+            const st = registeredStudents.find(s => String(s.admissionNo || '').trim().toLowerCase() === key);
+            return st && st.gender ? normalizeGender(st.gender) : '';
         }
 
         function normalizeYesNo(raw) {
@@ -2304,6 +2584,18 @@
                 `;
                 cSel.value = prev;
             }
+
+            // 5. Gender Grouping Selects (Rank Board & Result Analyzing)
+            document.querySelectorAll('.gender-group-select').forEach(sel => {
+                const prev = sel.value || 'separate';
+                sel.innerHTML = `
+                    <option value="separate">${escapeHtml(t('genderSeparateOpt'))}</option>
+                    <option value="combined">${escapeHtml(t('genderCombinedOpt'))}</option>
+                    <option value="M">${escapeHtml(t('genderMaleOnlyOpt'))}</option>
+                    <option value="F">${escapeHtml(t('genderFemaleOnlyOpt'))}</option>
+                `;
+                sel.value = ['separate', 'combined', 'M', 'F'].includes(prev) ? prev : 'separate';
+            });
         }
 
         const SUBJECT_TRANSLATIONS = [
@@ -2630,7 +2922,7 @@
             tokenClient.requestAccessToken(reqOpts);
         }
 
-        const EMBEDDED_CODE_GS = "const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();\n\nfunction jsonResponse(obj) {\n  return ContentService\n    .createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction hashPassword(pwd) {\n  const raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(pwd).trim());\n  return raw.map(b => ('0' + ((b + 256) % 256).toString(16)).slice(-2)).join('');\n}\n\nfunction ensureTeachersAuthColumns(sheet) {\n  const lastCol = Math.max(sheet.getLastColumn(), 1);\n  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];\n  let passIdx = headers.indexOf('passwordHash') + 1;\n  let roleIdx = headers.indexOf('role') + 1;\n\n  if (passIdx === 0) {\n    passIdx = headers.filter(String).length + 1;\n    sheet.getRange(1, passIdx).setValue('passwordHash');\n  }\n  if (roleIdx === 0) {\n    roleIdx = sheet.getLastColumn() + 1;\n    sheet.getRange(1, roleIdx).setValue('role');\n  }\n  return { passIdx, roleIdx };\n}\n\nfunction doPost(e) {\n  const lock = LockService.getScriptLock();\n  lock.waitLock(15000);\n\n  try {\n    const body = JSON.parse(e.postData.contents);\n    const action = body.action;\n    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);\n\n    // 1. Register Teacher Account (under the same main Google Sheet)\n    if (action === 'registerTeacher') {\n      const teacherId = String(body.teacherId || '').trim();\n      const phone = String(body.phone || '').trim().replace(/[\\s-]/g, '');\n      const password = String(body.password || '').trim();\n\n      if (!teacherId || !password) {\n        return jsonResponse({ ok: false, error: 'Teacher ID \u0dc3\u0dc4 Password \u0d85\u0dc0\u0dc1\u0dca\u200d\u0dba\u0dba\u0dd2.' });\n      }\n\n      const tSheet = ss.getSheetByName('Teachers');\n      if (!tSheet) return jsonResponse({ ok: false, error: 'Teachers sheet \u0dc4\u0db8\u0dd4 \u0db1\u0ddc\u0dc0\u0dd3\u0dba.' });\n\n      const { passIdx, roleIdx } = ensureTeachersAuthColumns(tSheet);\n      const rows = tSheet.getDataRange().getValues();\n\n      for (let i = 1; i < rows.length; i++) {\n        const rowId = String(rows[i][0] || '').trim();\n        const rowPhone = String(rows[i][9] || '').trim().replace(/[\\s-]/g, '');\n        if (rowId.toLowerCase() === teacherId.toLowerCase()) {\n          if (phone && rowPhone && rowPhone !== phone) {\n            return jsonResponse({ ok: false, error: '\u0daf\u0dd4\u0dbb\u0d9a\u0dae\u0db1 \u0d85\u0d82\u0d9a\u0dba \u0d9c\u0dd4\u0dbb\u0dd4 \u0dbd\u0dda\u0d9b\u0db1\u0dba\u0dda \u0d87\u0dad\u0dd2 \u0d85\u0d82\u0d9a\u0dba\u0da7 \u0db1\u0ddc\u0d9c\u0dd0\u0dbd\u0db4\u0dda.' });\n          }\n          const existingHash = String(tSheet.getRange(i + 1, passIdx).getValue() || '').trim();\n          if (existingHash) {\n            return jsonResponse({ ok: false, error: '\u0db8\u0dd9\u0db8 Teacher ID \u0dc3\u0db3\u0dc4\u0dcf \u0daf\u0dd0\u0db1\u0da7\u0db8\u0dad\u0dca Account \u0d91\u0d9a\u0d9a\u0dca \u0d87\u0dad.' });\n          }\n          tSheet.getRange(i + 1, passIdx).setValue(hashPassword(password));\n          const currentRole = String(tSheet.getRange(i + 1, roleIdx).getValue() || '').trim();\n          if (!currentRole) tSheet.getRange(i + 1, roleIdx).setValue('teacher');\n\n          return jsonResponse({\n            ok: true,\n            user: {\n              id: rowId,\n              name: rows[i][1] || '',\n              classTeacher: rows[i][10] || 'NONE',\n              subjects: rows[i][11] || '',\n              role: currentRole || 'teacher'\n            }\n          });\n        }\n      }\n      return jsonResponse({ ok: false, error: '\u0db8\u0dd9\u0db8 Teacher ID \u0db4\u0daf\u0dca\u0db0\u0dad\u0dd2\u0dba\u0dda \u0dbd\u0dd2\u0dba\u0dcf\u0db4\u0daf\u0dd2\u0d82\u0da0\u0dd2 \u0d9a\u0dbb \u0db1\u0ddc\u0db8\u0dd0\u0dad. \u0db4\u0dbb\u0dd2\u0db4\u0dcf\u0dbd\u0d9a\u0d9c\u0dd9\u0db1\u0dca \u0dc0\u0dd2\u0db8\u0dc3\u0db1\u0dca\u0db1.' });\n    }\n\n    // 2. Teacher Login\n    if (action === 'loginTeacher') {\n      const teacherId = String(body.teacherId || '').trim();\n      const password = String(body.password || '').trim();\n      const tSheet = ss.getSheetByName('Teachers');\n      if (!tSheet) return jsonResponse({ ok: false, error: 'Teachers sheet \u0dc4\u0db8\u0dd4 \u0db1\u0ddc\u0dc0\u0dd3\u0dba.' });\n\n      const { passIdx, roleIdx } = ensureTeachersAuthColumns(tSheet);\n      const rows = tSheet.getDataRange().getValues();\n      const inputHash = hashPassword(password);\n\n      for (let i = 1; i < rows.length; i++) {\n        const rowId = String(rows[i][0] || '').trim();\n        if (rowId.toLowerCase() === teacherId.toLowerCase()) {\n          const savedHash = String(rows[i][passIdx - 1] || '').trim();\n          if (!savedHash) {\n            return jsonResponse({ ok: false, error: '\u0db8\u0dd9\u0db8 \u0d9c\u0dd4\u0dbb\u0dd4\u0dc0\u0dbb\u0dba\u0dcf \u0dad\u0dc0\u0db8 Account \u0d91\u0d9a\u0d9a\u0dca \u0dc3\u0dcf\u0daf\u0dcf\u0d9c\u0dd9\u0db1 \u0db1\u0dd0\u0dad. Account \u0dc3\u0dcf\u0daf\u0db1\u0dca\u0db1.' });\n          }\n          if (savedHash !== inputHash) {\n            return jsonResponse({ ok: false, error: 'Password \u0dc0\u0dd0\u0dbb\u0daf\u0dd2\u0dba\u0dd2.' });\n          }\n          return jsonResponse({\n            ok: true,\n            user: {\n              id: rowId,\n              name: rows[i][1] || '',\n              classTeacher: rows[i][10] || 'NONE',\n              subjects: rows[i][11] || '',\n              role: String(rows[i][roleIdx - 1] || 'teacher')\n            }\n          });\n        }\n      }\n      return jsonResponse({ ok: false, error: 'Teacher ID \u0dc4\u0db8\u0dd4 \u0db1\u0ddc\u0dc0\u0dd3\u0dba.' });\n    }\n\n    // 3. Load Complete Database Bundle\n    if (action === 'getBundle') {\n      const getRows = (name, startCol, endCol) => {\n        const sh = ss.getSheetByName(name);\n        if (!sh || sh.getLastRow() < 2) return [];\n        return sh.getRange(2, startCol, sh.getLastRow() - 1, endCol).getValues();\n      };\n      return jsonResponse({\n        ok: true,\n        spreadsheetId: SPREADSHEET_ID,\n        settings: getRows('Settings', 1, 2),\n        config: getRows('Config', 1, 2),\n        students: getRows('Students', 1, 9),\n        teachers: getRows('Teachers', 1, 12),\n        marks: getRows('Marks', 1, 9)\n      });\n    }\n\n    // 4. Concurrent-Safe Marks Upsert (Merge without overwriting other teachers' subjects)\n    if (action === 'upsertMarks') {\n      const mSheet = ss.getSheetByName('Marks');\n      const incoming = Array.isArray(body.records) ? body.records : [];\n      const existingRows = mSheet.getLastRow() > 1\n        ? mSheet.getRange(2, 1, mSheet.getLastRow() - 1, 9).getValues()\n        : [];\n\n      const map = new Map();\n      existingRows.forEach(r => {\n        if (r[0]) map.set(`${r[0]}__${r[2]}__${r[3]}`, r);\n      });\n\n      incoming.forEach(m => {\n        const key = `${m.id}__${m.term}__${m.grade}`;\n        const prev = map.get(key);\n        let mergedMarks = m.marks || {};\n        if (prev && prev[8]) {\n          try {\n            const oldObj = JSON.parse(prev[8]);\n            mergedMarks = { ...oldObj, ...mergedMarks };\n          } catch (e) {}\n        }\n        let tot = 0, cnt = 0;\n        Object.values(mergedMarks).forEach(v => {\n          if (v !== 'AB' && v !== '' && !isNaN(parseFloat(v))) tot += parseFloat(v);\n          cnt++;\n        });\n        const totalVal = parseFloat(tot.toFixed(2));\n        const avgVal = cnt > 0 ? parseFloat((tot / cnt).toFixed(2)) : 0;\n\n        map.set(key, [\n          m.id, m.name, m.term, m.grade, m.fullClassName || m.grade,\n          totalVal, avgVal, m.serialNo || 1, JSON.stringify(mergedMarks)\n        ]);\n      });\n\n      const outRows = Array.from(map.values());\n      mSheet.clearContents();\n      mSheet.getRange(1, 1, 1, 9).setValues([['id', 'name', 'term', 'grade', 'fullClassName', 'total', 'average', 'serialNo', 'marksJSON']]);\n      if (outRows.length > 0) {\n        mSheet.getRange(2, 1, outRows.length, 9).setValues(outRows);\n      }\n      return jsonResponse({ ok: true, marks: outRows });\n    }\n\n    // 5. Generic Tab Sync\n    if (action === 'syncTab') {\n      const sh = ss.getSheetByName(body.tabName);\n      if (!sh) return jsonResponse({ ok: false, error: 'Tab not found: ' + body.tabName });\n      const headers = body.headers || [];\n      const rows = body.rows || [];\n      sh.clearContents();\n      sh.getRange(1, 1, 1, headers.length).setValues([headers]);\n      if (rows.length > 0) {\n        sh.getRange(2, 1, rows.length, headers.length).setValues(rows);\n      }\n      return jsonResponse({ ok: true });\n    }\n\n    return jsonResponse({ ok: false, error: 'Unknown action' });\n  } catch (err) {\n    return jsonResponse({ ok: false, error: err.message });\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
+        const EMBEDDED_CODE_GS = "const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();\n\nfunction jsonResponse(obj) {\n  return ContentService\n    .createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction hashPassword(pwd) {\n  const raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(pwd).trim());\n  return raw.map(b => ('0' + ((b + 256) % 256).toString(16)).slice(-2)).join('');\n}\n\nfunction ensureTeachersAuthColumns(sheet) {\n  const lastCol = Math.max(sheet.getLastColumn(), 1);\n  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];\n  let passIdx = headers.indexOf('passwordHash') + 1;\n  let roleIdx = headers.indexOf('role') + 1;\n\n  if (passIdx === 0) {\n    passIdx = headers.filter(String).length + 1;\n    sheet.getRange(1, passIdx).setValue('passwordHash');\n  }\n  if (roleIdx === 0) {\n    roleIdx = sheet.getLastColumn() + 1;\n    sheet.getRange(1, roleIdx).setValue('role');\n  }\n  return { passIdx, roleIdx };\n}\n\nfunction doPost(e) {\n  const lock = LockService.getScriptLock();\n  lock.waitLock(15000);\n\n  try {\n    const body = JSON.parse(e.postData.contents);\n    const action = body.action;\n    const targetSheetId = (body && body.spreadsheetId) ? String(body.spreadsheetId).trim() : SPREADSHEET_ID;\n    const ss = SpreadsheetApp.openById(targetSheetId);\n\n    // 1. Register Teacher Account (under the same main Google Sheet)\n    if (action === 'registerTeacher') {\n      const teacherId = String(body.teacherId || '').trim();\n      const phone = String(body.phone || '').trim().replace(/[\\s-]/g, '');\n      const password = String(body.password || '').trim();\n\n      if (!teacherId || !password) {\n        return jsonResponse({ ok: false, error: 'Teacher ID \u0dc3\u0dc4 Password \u0d85\u0dc0\u0dc1\u0dca\u200d\u0dba\u0dba\u0dd2.' });\n      }\n\n      const tSheet = ss.getSheetByName('Teachers');\n      if (!tSheet) return jsonResponse({ ok: false, error: 'Teachers sheet \u0dc4\u0db8\u0dd4 \u0db1\u0ddc\u0dc0\u0dd3\u0dba.' });\n\n      const { passIdx, roleIdx } = ensureTeachersAuthColumns(tSheet);\n      const rows = tSheet.getDataRange().getValues();\n\n      for (let i = 1; i < rows.length; i++) {\n        const rowId = String(rows[i][0] || '').trim();\n        const rowPhone = String(rows[i][9] || '').trim().replace(/[\\s-]/g, '');\n        if (rowId.toLowerCase() === teacherId.toLowerCase()) {\n          if (phone && rowPhone && rowPhone !== phone) {\n            return jsonResponse({ ok: false, error: '\u0daf\u0dd4\u0dbb\u0d9a\u0dae\u0db1 \u0d85\u0d82\u0d9a\u0dba \u0d9c\u0dd4\u0dbb\u0dd4 \u0dbd\u0dda\u0d9b\u0db1\u0dba\u0dda \u0d87\u0dad\u0dd2 \u0d85\u0d82\u0d9a\u0dba\u0da7 \u0db1\u0ddc\u0d9c\u0dd0\u0dbd\u0db4\u0dda.' });\n          }\n          const existingHash = String(tSheet.getRange(i + 1, passIdx).getValue() || '').trim();\n          if (existingHash) {\n            return jsonResponse({ ok: false, error: '\u0db8\u0dd9\u0db8 Teacher ID \u0dc3\u0db3\u0dc4\u0dcf \u0daf\u0dd0\u0db1\u0da7\u0db8\u0dad\u0dca Account \u0d91\u0d9a\u0d9a\u0dca \u0d87\u0dad.' });\n          }\n          tSheet.getRange(i + 1, passIdx).setValue(hashPassword(password));\n          const currentRole = String(tSheet.getRange(i + 1, roleIdx).getValue() || '').trim();\n          if (!currentRole) tSheet.getRange(i + 1, roleIdx).setValue('teacher');\n\n          return jsonResponse({\n            ok: true,\n            user: {\n              id: rowId,\n              name: rows[i][1] || '',\n              classTeacher: rows[i][10] || 'NONE',\n              subjects: rows[i][11] || '',\n              role: currentRole || 'teacher'\n            }\n          });\n        }\n      }\n      return jsonResponse({ ok: false, error: '\u0db8\u0dd9\u0db8 Teacher ID \u0db4\u0daf\u0dca\u0db0\u0dad\u0dd2\u0dba\u0dda \u0dbd\u0dd2\u0dba\u0dcf\u0db4\u0daf\u0dd2\u0d82\u0da0\u0dd2 \u0d9a\u0dbb \u0db1\u0ddc\u0db8\u0dd0\u0dad. \u0db4\u0dbb\u0dd2\u0db4\u0dcf\u0dbd\u0d9a\u0d9c\u0dd9\u0db1\u0dca \u0dc0\u0dd2\u0db8\u0dc3\u0db1\u0dca\u0db1.' });\n    }\n\n    // 2. Teacher Login\n    if (action === 'loginTeacher') {\n      const teacherId = String(body.teacherId || '').trim();\n      const password = String(body.password || '').trim();\n      const tSheet = ss.getSheetByName('Teachers');\n      if (!tSheet) return jsonResponse({ ok: false, error: 'Teachers sheet \u0dc4\u0db8\u0dd4 \u0db1\u0ddc\u0dc0\u0dd3\u0dba.' });\n\n      const { passIdx, roleIdx } = ensureTeachersAuthColumns(tSheet);\n      const rows = tSheet.getDataRange().getValues();\n      const inputHash = hashPassword(password);\n\n      for (let i = 1; i < rows.length; i++) {\n        const rowId = String(rows[i][0] || '').trim();\n        if (rowId.toLowerCase() === teacherId.toLowerCase()) {\n          const savedHash = String(rows[i][passIdx - 1] || '').trim();\n          if (!savedHash) {\n            return jsonResponse({ ok: false, error: '\u0db8\u0dd9\u0db8 \u0d9c\u0dd4\u0dbb\u0dd4\u0dc0\u0dbb\u0dba\u0dcf \u0dad\u0dc0\u0db8 Account \u0d91\u0d9a\u0d9a\u0dca \u0dc3\u0dcf\u0daf\u0dcf\u0d9c\u0dd9\u0db1 \u0db1\u0dd0\u0dad. Account \u0dc3\u0dcf\u0daf\u0db1\u0dca\u0db1.' });\n          }\n          if (savedHash !== inputHash) {\n            return jsonResponse({ ok: false, error: 'Password \u0dc0\u0dd0\u0dbb\u0daf\u0dd2\u0dba\u0dd2.' });\n          }\n          return jsonResponse({\n            ok: true,\n            user: {\n              id: rowId,\n              name: rows[i][1] || '',\n              classTeacher: rows[i][10] || 'NONE',\n              subjects: rows[i][11] || '',\n              role: String(rows[i][roleIdx - 1] || 'teacher')\n            }\n          });\n        }\n      }\n      return jsonResponse({ ok: false, error: 'Teacher ID \u0dc4\u0db8\u0dd4 \u0db1\u0ddc\u0dc0\u0dd3\u0dba.' });\n    }\n\n    // 3. Load Complete Database Bundle\n    if (action === 'getBundle') {\n      const getRows = (name, startCol, endCol) => {\n        const sh = ss.getSheetByName(name);\n        if (!sh || sh.getLastRow() < 2) return [];\n        return sh.getRange(2, startCol, sh.getLastRow() - 1, endCol).getValues();\n      };\n      return jsonResponse({\n        ok: true,\n        spreadsheetId: targetSheetId,\n        settings: getRows('Settings', 1, 2),\n        config: getRows('Config', 1, 2),\n        students: getRows('Students', 1, 9),\n        teachers: getRows('Teachers', 1, 12),\n        marks: getRows('Marks', 1, 9)\n      });\n    }\n\n    // 4. Concurrent-Safe Marks Upsert (Merge without overwriting other teachers' subjects)\n    if (action === 'upsertMarks') {\n      const mSheet = ss.getSheetByName('Marks');\n      const incoming = Array.isArray(body.records) ? body.records : [];\n      const existingRows = mSheet.getLastRow() > 1\n        ? mSheet.getRange(2, 1, mSheet.getLastRow() - 1, 9).getValues()\n        : [];\n\n      const map = new Map();\n      existingRows.forEach(r => {\n        if (r[0]) map.set(`${r[0]}__${r[2]}__${r[3]}`, r);\n      });\n\n      incoming.forEach(m => {\n        const key = `${m.id}__${m.term}__${m.grade}`;\n        const prev = map.get(key);\n        let mergedMarks = m.marks || {};\n        if (prev && prev[8]) {\n          try {\n            const oldObj = JSON.parse(prev[8]);\n            mergedMarks = { ...oldObj, ...mergedMarks };\n          } catch (e) {}\n        }\n        let tot = 0, cnt = 0;\n        Object.values(mergedMarks).forEach(v => {\n          if (v !== 'AB' && v !== '' && !isNaN(parseFloat(v))) tot += parseFloat(v);\n          cnt++;\n        });\n        const totalVal = parseFloat(tot.toFixed(2));\n        const avgVal = cnt > 0 ? parseFloat((tot / cnt).toFixed(2)) : 0;\n\n        map.set(key, [\n          m.id, m.name, m.term, m.grade, m.fullClassName || m.grade,\n          totalVal, avgVal, m.serialNo || 1, JSON.stringify(mergedMarks)\n        ]);\n      });\n\n      const outRows = Array.from(map.values());\n      mSheet.clearContents();\n      mSheet.getRange(1, 1, 1, 9).setValues([['id', 'name', 'term', 'grade', 'fullClassName', 'total', 'average', 'serialNo', 'marksJSON']]);\n      if (outRows.length > 0) {\n        mSheet.getRange(2, 1, outRows.length, 9).setValues(outRows);\n      }\n      return jsonResponse({ ok: true, marks: outRows });\n    }\n\n    // 5. Generic Tab Sync\n    if (action === 'syncTab') {\n      const sh = ss.getSheetByName(body.tabName);\n      if (!sh) return jsonResponse({ ok: false, error: 'Tab not found: ' + body.tabName });\n      const headers = body.headers || [];\n      const rows = body.rows || [];\n      sh.clearContents();\n      sh.getRange(1, 1, 1, headers.length).setValues([headers]);\n      if (rows.length > 0) {\n        sh.getRange(2, 1, rows.length, headers.length).setValues(rows);\n      }\n      return jsonResponse({ ok: true });\n    }\n\n    return jsonResponse({ ok: false, error: 'Unknown action' });\n  } catch (err) {\n    return jsonResponse({ ok: false, error: err.message });\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
 
         async function autoProvisionAndUpdateAppsScript(targetSheetId, activeSchoolTitle) {
             if (!accessToken || !targetSheetId) return;
@@ -2782,6 +3074,11 @@
                 if (pInp) pInp.value = spreadsheetId;
                 const portalUrl = `${window.location.origin}${window.location.pathname}?sheet=${spreadsheetId}`;
                 document.getElementById('studentPortalLinkBox').value = portalUrl;
+                const gasParam = (appsScriptUrl && appsScriptUrl !== CONFIG.DEFAULT_APPS_SCRIPT_URL)
+                    ? `&gas=${encodeURIComponent(appsScriptUrl)}` : '';
+                const teacherUrl = `${window.location.origin}${window.location.pathname}?sheet=${spreadsheetId}&mode=teacher${gasParam}`;
+                const tLinkBox = document.getElementById('teacherPortalLinkBox');
+                if (tLinkBox) tLinkBox.value = teacherUrl;
 
                 // Auto-sync & deploy Google Apps Script (Code.js) upon Gmail/Google account login
                 try {
@@ -2883,6 +3180,7 @@
                 serialNo: parseInt(r[7], 10) || 1, marks: r[8] ? JSON.parse(r[8]) : {}
             })).filter(m => m.id);
 
+            await autoRemoveDuplicates(true);
             refreshAllDynamicDropdowns();
             renderStudentsTable();
             renderTeachersTable();
@@ -2893,16 +3191,114 @@
             setSyncStatus('syncConnected', '#10b981');
         }
 
+        async function autoRemoveDuplicates(shouldSync = false) {
+            const removed = { grades: 0, subjects: 0, students: 0, teachers: 0, marks: 0 };
+
+            // 1. Deduplicate Grades (case-insensitive)
+            const seenGrades = new Map();
+            const cleanGrades = [];
+            const cleanMap = {};
+            grades.forEach(g => {
+                const trimmed = String(g || '').trim();
+                if (!trimmed) return;
+                const key = trimmed.toLowerCase();
+                if (!seenGrades.has(key)) {
+                    seenGrades.set(key, trimmed);
+                    cleanGrades.push(trimmed);
+                    cleanMap[trimmed] = Array.isArray(gradeSubjects[g]) ? [...gradeSubjects[g]] : [];
+                } else {
+                    removed.grades++;
+                    const canon = seenGrades.get(key);
+                    const extra = Array.isArray(gradeSubjects[g]) ? gradeSubjects[g] : [];
+                    cleanMap[canon] = Array.from(new Set([...(cleanMap[canon] || []), ...extra]));
+                }
+            });
+            grades = cleanGrades;
+            gradeSubjects = cleanMap;
+
+            // 2. Deduplicate Subjects (case-insensitive)
+            const seenSubs = new Set();
+            const cleanSubs = [];
+            subjects.forEach(s => {
+                const trimmed = String(s || '').trim();
+                if (!trimmed) return;
+                const key = trimmed.toLowerCase();
+                if (!seenSubs.has(key)) {
+                    seenSubs.add(key);
+                    cleanSubs.push(trimmed);
+                } else {
+                    removed.subjects++;
+                }
+            });
+            subjects = cleanSubs;
+
+            // 3. Deduplicate Registered Students by admissionNo (keep latest entry)
+            const stMap = new Map();
+            registeredStudents.forEach(s => {
+                const key = String(s.admissionNo || '').trim().toLowerCase();
+                if (!key) return;
+                if (stMap.has(key)) removed.students++;
+                stMap.set(key, { ...s, admissionNo: String(s.admissionNo).trim() });
+            });
+            registeredStudents = Array.from(stMap.values());
+
+            // 4. Deduplicate Registered Teachers by ID (keep latest entry)
+            const tcMap = new Map();
+            registeredTeachers.forEach(tc => {
+                const key = String(tc.id || '').trim().toLowerCase();
+                if (!key) return;
+                if (tcMap.has(key)) removed.teachers++;
+                tcMap.set(key, { ...tc, id: String(tc.id).trim() });
+            });
+            registeredTeachers = Array.from(tcMap.values());
+
+            // 5. Deduplicate Marks by id__term__grade (merge marks safely)
+            const mkMap = new Map();
+            studentsData.forEach(m => {
+                const key = `${String(m.id || '').trim().toLowerCase()}__${normalizeTerm(m.term)}__${String(m.grade || '').trim().toLowerCase()}`;
+                if (!m.id) return;
+                if (mkMap.has(key)) {
+                    removed.marks++;
+                    const prev = mkMap.get(key);
+                    const merged = { ...prev, ...m, marks: { ...(prev.marks || {}), ...(m.marks || {}) } };
+                    recalcTotals(merged);
+                    mkMap.set(key, merged);
+                } else {
+                    const copy = { ...m, term: normalizeTerm(m.term), marks: { ...(m.marks || {}) } };
+                    recalcTotals(copy);
+                    mkMap.set(key, copy);
+                }
+            });
+            studentsData = Array.from(mkMap.values());
+
+            const totalRemoved = removed.grades + removed.subjects + removed.students + removed.teachers + removed.marks;
+            if (totalRemoved > 0) {
+                saveConfigToLocalCache();
+                if (shouldSync && !currentTeacherSession && spreadsheetId && accessToken) {
+                    if (removed.grades > 0 || removed.subjects > 0) await syncConfigToSheet();
+                    if (removed.students > 0) await syncStudentsToSheet();
+                    if (removed.teachers > 0) await syncTeachersToSheet();
+                    if (removed.marks > 0) await syncMarksToSheet();
+                }
+                showToast(t('autoDedupRemovedToast').replace('{count}', totalRemoved), 'info');
+            }
+            return { total: totalRemoved, ...removed };
+        }
+
         async function callGasApi(payload) {
             const url = (appsScriptUrl || '').trim();
             if (!url) throw new Error(t('toastMissingGasUrl'));
+            const linkedId = getAutoLinkedSheetId();
+            const enrichedPayload = linkedId && !payload.spreadsheetId
+                ? { ...payload, spreadsheetId: linkedId }
+                : payload;
             let res;
             try {
                 res = await fetch(url, {
                     method: 'POST',
                     redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(enrichedPayload)
                 });
             } catch (netErr) {
                 throw new Error(t('failedToFetchHint'));
@@ -2959,6 +3355,7 @@
                 serialNo: parseInt(r[7], 10) || 1, marks: r[8] ? JSON.parse(r[8]) : {}
             })).filter(m => m.id);
 
+            autoRemoveDuplicates(false);
             refreshAllDynamicDropdowns();
             renderStudentsTable();
             renderTeachersTable();
@@ -3090,11 +3487,13 @@
         }
 
         async function syncMarksToSheet() {
-            if ((appsScriptUrl || '').trim() && (currentTeacherSession || spreadsheetId)) {
+            await autoRemoveDuplicates(false);
+            if (currentTeacherSession && (appsScriptUrl || '').trim()) {
                 setSyncStatus('syncSaving', '#f59e0b');
                 try {
                     const res = await callGasApi({
                         action: 'upsertMarks',
+                        spreadsheetId: getAutoLinkedSheetId(),
                         records: studentsData
                     });
                     if (Array.isArray(res.marks)) {
@@ -3113,11 +3512,26 @@
                     return;
                 }
             }
+            // Admin always syncs directly to the exact same Google Sheet (spreadsheetId)
             const rows = studentsData.map(m => [
                 m.id, m.name, m.term, m.grade, m.fullClassName,
                 m.total, m.average, m.serialNo, JSON.stringify(m.marks)
             ]);
             await syncSheetTab('Marks', ['id', 'name', 'term', 'grade', 'fullClassName', 'total', 'average', 'serialNo', 'marksJSON'], rows);
+        }
+
+        async function syncAllDataNow() {
+            try {
+                if (currentTeacherSession) {
+                    await loadAllDataViaGas();
+                } else if (spreadsheetId && accessToken) {
+                    await loadAllDataFromSheet();
+                }
+                showToast(t('syncSuccessToast'), 'success');
+            } catch (err) {
+                console.error(err);
+                showToast(t('syncFailed'), 'error');
+            }
         }
 
         // ============================================================
@@ -3677,6 +4091,43 @@
             return data;
         }
 
+        function renderGenderAwareRows(data, genderMode, colCount, rowBuilder) {
+            if (data.length === 0) {
+                return `<tr><td colspan="${colCount}" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
+            }
+            if (genderMode === 'M') {
+                const boys = data.filter(s => getStudentGender(s.id) === 'M');
+                if (boys.length === 0) return `<tr><td colspan="${colCount}" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
+                return boys.map((s, i) => rowBuilder(s, i)).join('');
+            }
+            if (genderMode === 'F') {
+                const girls = data.filter(s => getStudentGender(s.id) === 'F');
+                if (girls.length === 0) return `<tr><td colspan="${colCount}" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
+                return girls.map((s, i) => rowBuilder(s, i)).join('');
+            }
+            if (genderMode === 'combined') {
+                return data.map((s, i) => rowBuilder(s, i)).join('');
+            }
+            // Default: 'separate' — clearly separate Male & Female sections while preserving true class Rank
+            const boys = data.filter(s => getStudentGender(s.id) === 'M');
+            const girls = data.filter(s => getStudentGender(s.id) === 'F');
+            const unknown = data.filter(s => !['M', 'F'].includes(getStudentGender(s.id)));
+            let out = '';
+            if (boys.length > 0) {
+                out += `<tr class="gender-group-row"><td colspan="${colCount}">${escapeHtml(t('genderGroupMale'))} (${boys.length})</td></tr>`;
+                out += boys.map((s, i) => rowBuilder(s, i)).join('');
+            }
+            if (girls.length > 0) {
+                out += `<tr class="gender-group-row"><td colspan="${colCount}">${escapeHtml(t('genderGroupFemale'))} (${girls.length})</td></tr>`;
+                out += girls.map((s, i) => rowBuilder(s, i)).join('');
+            }
+            if (unknown.length > 0) {
+                out += `<tr class="gender-group-row"><td colspan="${colCount}">${escapeHtml(t('genderGroupUnknown'))} (${unknown.length})</td></tr>`;
+                out += unknown.map((s, i) => rowBuilder(s, i)).join('');
+            }
+            return out;
+        }
+
         function updateTable(preserveSubFilter = false) {
             const term = document.getElementById('tableTermSelect')?.value || 'T1';
             const grade = document.getElementById('tableGradeSelect')?.value;
@@ -3685,12 +4136,17 @@
             const subSel = document.getElementById('filterSubject');
             if (!headRow || !tbody || !subSel) return;
 
-            document.getElementById('printRankSubHeader').textContent = `${displayTerm(term)} | ${grade || '-'}`;
+            const metaText = `${t('labelTerm')}: ${displayTerm(term)}  |  ${t('labelGrade')}: ${grade || '-'}`;
+            document.getElementById('printRankSubHeader').textContent = metaText;
+            const visMeta = document.getElementById('rankVisibleMeta');
+            if (visMeta) visMeta.textContent = metaText;
+            const genSummary = document.getElementById('rankGenderSummary');
 
             if (!grade) {
+                if (genSummary) genSummary.textContent = '';
                 subSel.innerHTML = `<option value="all">${escapeHtml(t('allSubjects'))}</option>`;
-                headRow.innerHTML = `<th class="p-3">${escapeHtml(t('colSerial'))}</th><th class="p-3 text-left">${escapeHtml(t('colName'))}</th><th class="p-3">${escapeHtml(t('colTotal'))}</th><th class="p-3">${escapeHtml(t('colAverage'))}</th><th class="p-3">${escapeHtml(t('colRank'))}</th>`;
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-slate-500">${escapeHtml(grades.length ? t('selectGrade') : t('noGradesOpt'))}</td></tr>`;
+                headRow.innerHTML = `<th class="p-3">${escapeHtml(t('colSerial'))}</th><th class="p-3 text-left">${escapeHtml(t('colName'))}</th><th class="p-3">${escapeHtml(t('gender'))}</th><th class="p-3">${escapeHtml(t('colTotal'))}</th><th class="p-3">${escapeHtml(t('colAverage'))}</th><th class="p-3">${escapeHtml(t('colRank'))}</th>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-slate-500">${escapeHtml(grades.length ? t('selectGrade') : t('noGradesOpt'))}</td></tr>`;
                 return;
             }
 
@@ -3704,6 +4160,7 @@
 
             const fSub = subSel.value;
             const fCond = document.getElementById('filterCondition').value || 'all';
+            const genderMode = document.getElementById('rankGenderGroup')?.value || 'separate';
 
             if (fSub !== 'all' && fCond !== 'all') {
                 data = data.filter(s => {
@@ -3718,32 +4175,40 @@
                 });
             }
 
+            const maleCount = data.filter(s => getStudentGender(s.id) === 'M').length;
+            const femaleCount = data.filter(s => getStudentGender(s.id) === 'F').length;
+            if (genSummary) {
+                genSummary.textContent = `${t('kpiStudents')}: ${data.length} | 👦 ${t('male')}: ${maleCount} | 👧 ${t('female')}: ${femaleCount}`;
+            }
+
             headRow.innerHTML = `<th class="p-2.5">${escapeHtml(t('colSerial'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAdmNo'))}</th>
-                <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>` +
-                subs.map(s => `<th class="p-2.5">${escapeHtml(s)}</th>`).join('') +
+                <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>
+                <th class="p-2.5">${escapeHtml(t('gender'))}</th>` +
+                subs.map(s => `<th class="p-2.5 ${fSub !== 'all' && s === fSub ? 'subject-highlight-th' : ''}">${escapeHtml(s)}</th>`).join('') +
                 `<th class="p-2.5">${escapeHtml(t('colTotal'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAverage'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colRank'))}</th>`;
 
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${subs.length + 6}" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
-                return;
-            }
-
             const reqCount = getSubjectsForGrade(grade).length;
-            tbody.innerHTML = data.map((s, i) => {
+            const colCount = subs.length + 7;
+            tbody.innerHTML = renderGenderAwareRows(data, genderMode, colCount, (s, i) => {
                 const rText = (reqCount > 0 && Object.keys(s.marks || {}).length < reqCount) ? t('pendingRank') : s._rank;
+                const gCode = getStudentGender(s.id);
                 return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td class="p-2.5 text-slate-500 font-semibold">${i + 1}</td>
                     <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
                     <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
-                    ${subs.map(sub => `<td class="p-2.5">${s.marks[sub] !== undefined ? escapeHtml(s.marks[sub]) : '-'}</td>`).join('')}
+                    <td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>
+                    ${subs.map(sub => {
+                        const hl = (fSub !== 'all' && sub === fSub) ? 'subject-highlight-td' : '';
+                        return `<td class="p-2.5 ${hl}">${s.marks[sub] !== undefined ? escapeHtml(s.marks[sub]) : '-'}</td>`;
+                    }).join('')}
                     <td class="p-2.5 font-bold">${s.total}</td>
                     <td class="p-2.5 font-bold text-blue-600 dark:text-sky-400">${Number(s.average).toFixed(2)}</td>
                     <td class="p-2.5 font-extrabold text-amber-600 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-950/20">${escapeHtml(rText)}</td>
                 </tr>`;
-            }).join('');
+            });
         }
 
         function searchAdminStudentById() {
@@ -3760,8 +4225,16 @@
             }
             resDiv.innerHTML = recs.map(r => {
                 const entries = Object.entries(r.marks || {});
+                const gCode = getStudentGender(r.id);
                 return `<div class="p-4 rounded-xl border border-blue-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                    <h4 class="text-sm font-bold text-blue-700 dark:text-sky-400 mb-3">👤 ${escapeHtml(r.name)} (${escapeHtml(r.grade)} | ${escapeHtml(displayTerm(r.term))})</h4>
+                    <div class="text-center border-b border-slate-300 dark:border-slate-700 pb-2 mb-3">
+                        <div class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white uppercase">${escapeHtml(schoolName || t('appTitle'))}</div>
+                        <div class="text-xs font-bold text-blue-700 dark:text-sky-400 mt-0.5">${escapeHtml(t('labelTerm'))}: ${escapeHtml(displayTerm(r.term))} &nbsp;|&nbsp; ${escapeHtml(t('labelGrade'))}: ${escapeHtml(r.grade)}</div>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">
+                        <span>👤 ${escapeHtml(r.name)} (${escapeHtml(t('colAdmNo'))}: ${escapeHtml(r.id)})</span>
+                        <span>${escapeHtml(t('gender'))}: ${escapeHtml(displayGender(gCode))}</span>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-xs sm:text-sm text-center border-collapse">
                             <thead class="bg-slate-200/70 dark:bg-slate-800">
@@ -3856,24 +4329,58 @@
         // ============================================================
         // 14. RESULT ANALYZING: MARKS & RANK LIST + MASTER MARKSHEET
         // ============================================================
+        function isPassingMark(mark, thresholdMode) {
+            if (mark === 'AB' || mark === '' || mark === undefined || mark === null) return false;
+            const n = parseFloat(mark);
+            if (isNaN(n)) return false;
+            if (thresholdMode === 'gt40') return n > 40;
+            if (thresholdMode === 'gte35') return n >= 35;
+            return n >= 40;
+        }
+
         function updateAnalysisTables() {
             const term = document.getElementById('analysisTermSelect')?.value || 'T1';
             const grade = document.getElementById('analysisGradeSelect')?.value;
-            const subText = `${displayTerm(term)} | ${grade || '-'}`;
+            const genderMode = document.getElementById('analysisGenderGroup')?.value || 'separate';
+            const thresholdMode = document.getElementById('analysisPassThreshold')?.value || 'gte40';
+            const showSatPass = document.getElementById('toggleSatPassPercentOption')?.checked !== false;
+
+            const statsCard = document.getElementById('analysisSubjectStatsCard');
+            if (statsCard) statsCard.classList.toggle('hidden', !showSatPass);
+
+            const subText = `${t('labelTerm')}: ${displayTerm(term)}  |  ${t('labelGrade')}: ${grade || '-'}`;
             document.getElementById('printAnalysisMarksSubHeader').textContent = subText;
             document.getElementById('printAnalysisMasterSubHeader').textContent = subText;
+            const statsPrintSub = document.getElementById('printAnalysisStatsSubHeader');
+            if (statsPrintSub) statsPrintSub.textContent = subText;
+            const marksVisMeta = document.getElementById('analysisMarksVisibleMeta');
+            if (marksVisMeta) marksVisMeta.textContent = subText;
+            const statsVisMeta = document.getElementById('analysisStatsVisibleMeta');
+            if (statsVisMeta) statsVisMeta.textContent = subText;
 
             const marksHead = document.getElementById('analysisMarksHeadRow');
             const marksBody = document.getElementById('analysisMarksBody');
+            const statsHead = document.getElementById('analysisStatsHeadRow');
+            const statsBody = document.getElementById('analysisStatsBody');
             const masterHead = document.getElementById('analysisMasterHeadRow');
             const masterBody = document.getElementById('analysisMasterBody');
+            const subFilterSel = document.getElementById('analysisFilterSubject');
+            const marksGenderSum = document.getElementById('analysisMarksGenderSummary');
+            const overallPills = document.getElementById('analysisStatsOverallPills');
 
             if (!grade) {
                 const msg = grades.length ? t('selectGrade') : t('noGradesOpt');
-                marksHead.innerHTML = `<th class="p-3">${escapeHtml(t('colSerial'))}</th><th class="p-3">${escapeHtml(t('colAdmNo'))}</th><th class="p-3 text-left">${escapeHtml(t('colName'))}</th><th class="p-3">${escapeHtml(t('colTotal'))}</th><th class="p-3">${escapeHtml(t('colAverage'))}</th><th class="p-3">${escapeHtml(t('colRank'))}</th>`;
-                marksBody.innerHTML = `<tr><td colspan="6" class="p-6 text-slate-500">${escapeHtml(msg)}</td></tr>`;
-                masterHead.innerHTML = `<th class="p-3">${escapeHtml(t('colSerial'))}</th><th class="p-3">${escapeHtml(t('colAdmNo'))}</th><th class="p-3 text-left">${escapeHtml(t('colName'))}</th><th class="p-3">A</th><th class="p-3">B</th><th class="p-3">C</th><th class="p-3">S</th><th class="p-3">W</th>`;
-                masterBody.innerHTML = `<tr><td colspan="8" class="p-6 text-slate-500">${escapeHtml(msg)}</td></tr>`;
+                if (subFilterSel) subFilterSel.innerHTML = `<option value="all">${escapeHtml(t('allSubjects'))}</option>`;
+                if (marksGenderSum) marksGenderSum.textContent = '';
+                if (overallPills) overallPills.textContent = '';
+                marksHead.innerHTML = `<th class="p-3">${escapeHtml(t('colSerial'))}</th><th class="p-3">${escapeHtml(t('colAdmNo'))}</th><th class="p-3 text-left">${escapeHtml(t('colName'))}</th><th class="p-3">${escapeHtml(t('gender'))}</th><th class="p-3">${escapeHtml(t('colTotal'))}</th><th class="p-3">${escapeHtml(t('colAverage'))}</th><th class="p-3">${escapeHtml(t('colRank'))}</th>`;
+                marksBody.innerHTML = `<tr><td colspan="7" class="p-6 text-slate-500">${escapeHtml(msg)}</td></tr>`;
+                if (statsHead && statsBody) {
+                    statsHead.innerHTML = `<th class="p-3">${escapeHtml(t('colSubject'))}</th><th class="p-3">${escapeHtml(t('colSat'))}</th><th class="p-3">${escapeHtml(t('colOver40'))}</th><th class="p-3">${escapeHtml(t('colPassPctSat'))}</th>`;
+                    statsBody.innerHTML = `<tr><td colspan="4" class="p-6 text-slate-500">${escapeHtml(msg)}</td></tr>`;
+                }
+                masterHead.innerHTML = `<th class="p-3">${escapeHtml(t('colSerial'))}</th><th class="p-3">${escapeHtml(t('colAdmNo'))}</th><th class="p-3 text-left">${escapeHtml(t('colName'))}</th><th class="p-3">${escapeHtml(t('gender'))}</th><th class="p-3">A</th><th class="p-3">B</th><th class="p-3">C</th><th class="p-3">S</th><th class="p-3">W</th>`;
+                masterBody.innerHTML = `<tr><td colspan="9" class="p-6 text-slate-500">${escapeHtml(msg)}</td></tr>`;
                 return;
             }
 
@@ -3881,32 +4388,155 @@
             const subs = getCombinedSubjectsForGrade(grade, ranked);
             const reqCount = getSubjectsForGrade(grade).length;
 
-            // --- Card 1: Student Marks & Rank List ---
+            if (subFilterSel) {
+                const prevSub = subFilterSel.value || 'all';
+                subFilterSel.innerHTML = `<option value="all">${escapeHtml(t('allSubjects'))}</option>` +
+                    subs.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+                subFilterSel.value = (prevSub === 'all' || subs.includes(prevSub)) ? prevSub : 'all';
+            }
+            const hlSub = subFilterSel ? subFilterSel.value : 'all';
+
+            const maleCnt = ranked.filter(s => getStudentGender(s.id) === 'M').length;
+            const femaleCnt = ranked.filter(s => getStudentGender(s.id) === 'F').length;
+            if (marksGenderSum) {
+                marksGenderSum.textContent = `${t('kpiStudents')}: ${ranked.length} | 👦 ${t('male')}: ${maleCnt} | 👧 ${t('female')}: ${femaleCnt}`;
+            }
+
+            // --- Card 1: Student Marks & Rank List (with Gender separation & Subject Highlight) ---
             marksHead.innerHTML = `
                 <th class="p-2.5">${escapeHtml(t('colSerial'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAdmNo'))}</th>
                 <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>
-                ${subs.map(s => `<th class="p-2.5">${escapeHtml(s)}</th>`).join('')}
+                <th class="p-2.5">${escapeHtml(t('gender'))}</th>
+                ${subs.map(s => `<th class="p-2.5 ${hlSub !== 'all' && s === hlSub ? 'subject-highlight-th' : ''}">${escapeHtml(s)}</th>`).join('')}
                 <th class="p-2.5">${escapeHtml(t('colTotal'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAverage'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colRank'))}</th>
             `;
 
-            if (ranked.length === 0) {
-                marksBody.innerHTML = `<tr><td colspan="${subs.length + 6}" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
-            } else {
-                marksBody.innerHTML = ranked.map((s, i) => {
-                    const rText = (reqCount > 0 && Object.keys(s.marks || {}).length < reqCount) ? t('pendingRank') : s._rank;
-                    return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                        <td class="p-2.5 font-semibold text-slate-500">${i + 1}</td>
-                        <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
-                        <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
-                        ${subs.map(sub => `<td class="p-2.5">${s.marks[sub] !== undefined ? escapeHtml(s.marks[sub]) : '-'}</td>`).join('')}
-                        <td class="p-2.5 font-bold">${s.total}</td>
-                        <td class="p-2.5 font-bold text-blue-600 dark:text-sky-400">${Number(s.average).toFixed(2)}</td>
-                        <td class="p-2.5 font-extrabold text-amber-600 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-950/20">${escapeHtml(rText)}</td>
+            marksBody.innerHTML = renderGenderAwareRows(ranked, genderMode, subs.length + 7, (s, i) => {
+                const rText = (reqCount > 0 && Object.keys(s.marks || {}).length < reqCount) ? t('pendingRank') : s._rank;
+                const gCode = getStudentGender(s.id);
+                return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="p-2.5 font-semibold text-slate-500">${i + 1}</td>
+                    <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
+                    <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
+                    <td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>
+                    ${subs.map(sub => {
+                        const hl = (hlSub !== 'all' && sub === hlSub) ? 'subject-highlight-td' : '';
+                        return `<td class="p-2.5 ${hl}">${s.marks[sub] !== undefined ? escapeHtml(s.marks[sub]) : '-'}</td>`;
+                    }).join('')}
+                    <td class="p-2.5 font-bold">${s.total}</td>
+                    <td class="p-2.5 font-bold text-blue-600 dark:text-sky-400">${Number(s.average).toFixed(2)}</td>
+                    <td class="p-2.5 font-extrabold text-amber-600 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-950/20">${escapeHtml(rText)}</td>
+                </tr>`;
+            });
+
+            // --- Card 1B: Subject-wise 40%+ Count & Sat Pass % Analysis ---
+            if (statsHead && statsBody) {
+                const threshLabel = thresholdMode === 'gt40' ? '> 40%' : (thresholdMode === 'gte35' ? '≥ 35%' : '≥ 40%');
+                statsHead.innerHTML = `
+                    <th class="p-2.5 text-left">${escapeHtml(t('colSubject'))}</th>
+                    <th class="p-2.5">${escapeHtml(t('colRegistered'))}</th>
+                    <th class="p-2.5">${escapeHtml(t('colSat'))}</th>
+                    <th class="p-2.5">${escapeHtml(t('colAbsent'))}</th>
+                    <th class="p-2.5">A</th>
+                    <th class="p-2.5">B</th>
+                    <th class="p-2.5">C</th>
+                    <th class="p-2.5">S</th>
+                    <th class="p-2.5">W</th>
+                    <th class="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">${escapeHtml(t('colOver40'))} (${threshLabel})</th>
+                    <th class="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300">${escapeHtml(t('colPassPctSat'))}</th>
+                    <th class="p-2.5">${escapeHtml(t('colSubAvg'))}</th>
+                `;
+
+                const gradeRegStudents = registeredStudents.filter(s => s.grade === grade);
+                const regCount = Math.max(gradeRegStudents.length, ranked.length);
+
+                if (subs.length === 0 || ranked.length === 0) {
+                    if (overallPills) overallPills.textContent = '';
+                    statsBody.innerHTML = `<tr><td colspan="12" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
+                } else {
+                    let totSatAll = 0, totPassAll = 0, totAbAll = 0, sumAvgAll = 0, avgSubCount = 0;
+
+                    const rowsHtml = subs.map(sub => {
+                        let sat = 0, satM = 0, satF = 0, ab = 0, pass40 = 0, passM = 0, passF = 0, sumMarks = 0;
+                        const gc = { A: 0, B: 0, C: 0, S: 0, W: 0 };
+
+                        ranked.forEach(st => {
+                            const rawM = st.marks ? st.marks[sub] : undefined;
+                            if (rawM === undefined || rawM === '') return;
+                            const gen = getStudentGender(st.id);
+                            if (String(rawM).toUpperCase() === 'AB') {
+                                ab++;
+                                return;
+                            }
+                            const num = parseFloat(rawM);
+                            if (isNaN(num)) return;
+                            sat++;
+                            if (gen === 'M') satM++;
+                            else if (gen === 'F') satF++;
+                            sumMarks += num;
+
+                            const gb = getGradeBadge(num);
+                            if (gc[gb] !== undefined) gc[gb]++;
+                            if (isPassingMark(num, thresholdMode)) {
+                                pass40++;
+                                if (gen === 'M') passM++;
+                                else if (gen === 'F') passF++;
+                            }
+                        });
+
+                        const passPct = sat > 0 ? ((pass40 / sat) * 100).toFixed(1) : '0.0';
+                        const subAvg = sat > 0 ? (sumMarks / sat).toFixed(2) : '0.00';
+                        totSatAll += sat;
+                        totPassAll += pass40;
+                        totAbAll += ab;
+                        if (sat > 0) { sumAvgAll += parseFloat(subAvg); avgSubCount++; }
+
+                        const isHl = hlSub !== 'all' && sub === hlSub;
+                        const pctColor = parseFloat(passPct) >= 75
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                            : parseFloat(passPct) >= 50
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                : 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300';
+
+                        return `<tr class="${isHl ? 'subject-highlight-td' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}">
+                            <td class="p-2.5 text-left font-bold ${isHl ? 'subject-highlight-td' : ''}">${escapeHtml(sub)}</td>
+                            <td class="p-2.5 font-semibold">${regCount}</td>
+                            <td class="p-2.5 font-bold text-blue-700 dark:text-sky-400">${sat}<div class="text-[10px] font-medium text-slate-500">(${t('male')[0]}:${satM} / ${t('female')[0]}:${satF})</div></td>
+                            <td class="p-2.5 font-semibold text-slate-500">${ab}</td>
+                            <td class="p-2.5 font-bold text-emerald-600">${gc.A}</td>
+                            <td class="p-2.5 font-bold text-blue-600">${gc.B}</td>
+                            <td class="p-2.5 font-bold text-amber-600">${gc.C}</td>
+                            <td class="p-2.5 font-bold text-orange-600">${gc.S}</td>
+                            <td class="p-2.5 font-bold text-rose-600">${gc.W}</td>
+                            <td class="p-2.5 font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/20">${pass40}<div class="text-[10px] font-medium text-slate-500">(${t('male')[0]}:${passM} / ${t('female')[0]}:${passF})</div></td>
+                            <td class="p-2.5 bg-indigo-50/40 dark:bg-indigo-950/20"><span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-extrabold ${pctColor}">${passPct}%</span></td>
+                            <td class="p-2.5 font-bold">${subAvg}</td>
+                        </tr>`;
+                    }).join('');
+
+                    const overallPassPct = totSatAll > 0 ? ((totPassAll / totSatAll) * 100).toFixed(1) : '0.0';
+                    const overallAvg = avgSubCount > 0 ? (sumAvgAll / avgSubCount).toFixed(2) : '0.00';
+
+                    if (overallPills) {
+                        overallPills.textContent = `${t('colSat')}: ${totSatAll} | ${t('colOver40')} (${threshLabel}): ${totPassAll} | ${t('colPassPctSat')}: ${overallPassPct}%`;
+                    }
+
+                    const summaryRow = `<tr class="bg-slate-100 dark:bg-slate-800 font-extrabold border-t-2 border-slate-300 dark:border-slate-700">
+                        <td class="p-2.5 text-left">${escapeHtml(t('overallSummaryRow'))}</td>
+                        <td class="p-2.5">${regCount}</td>
+                        <td class="p-2.5 text-blue-700 dark:text-sky-400">${totSatAll}</td>
+                        <td class="p-2.5">${totAbAll}</td>
+                        <td class="p-2.5" colspan="5">-</td>
+                        <td class="p-2.5 text-emerald-700 dark:text-emerald-300">${totPassAll}</td>
+                        <td class="p-2.5 text-indigo-700 dark:text-indigo-300">${overallPassPct}%</td>
+                        <td class="p-2.5">${overallAvg}</td>
                     </tr>`;
-                }).join('');
+
+                    statsBody.innerHTML = rowsHtml + summaryRow;
+                }
             }
 
             // --- Card 2: Master Marksheet (A/B/C/S/W) ---
@@ -3914,35 +4544,35 @@
                 <th class="p-2.5">${escapeHtml(t('colSerial'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAdmNo'))}</th>
                 <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>
-                ${subs.map(s => `<th class="p-2.5">${escapeHtml(s)}</th>`).join('')}
+                <th class="p-2.5">${escapeHtml(t('gender'))}</th>
+                ${subs.map(s => `<th class="p-2.5 ${hlSub !== 'all' && s === hlSub ? 'subject-highlight-th' : ''}">${escapeHtml(s)}</th>`).join('')}
                 <th class="p-2.5">A</th><th class="p-2.5">B</th><th class="p-2.5">C</th><th class="p-2.5">S</th><th class="p-2.5">W</th>
             `;
 
-            if (ranked.length === 0) {
-                masterBody.innerHTML = `<tr><td colspan="${subs.length + 8}" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
-            } else {
-                masterBody.innerHTML = ranked.map((s, i) => {
-                    const c = { A: 0, B: 0, C: 0, S: 0, W: 0 };
-                    const subCells = subs.map(sub => {
-                        const m = s.marks[sub];
-                        if (m === undefined) return `<td class="p-2.5 text-slate-400">-</td>`;
-                        const g = getGradeBadge(m);
-                        if (c[g] !== undefined) c[g]++;
-                        return `<td class="p-2"><span class="inline-block min-w-[26px] px-1.5 py-0.5 rounded-md text-xs font-bold badge-${g}">${g}</span></td>`;
-                    }).join('');
-                    return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                        <td class="p-2.5 font-semibold text-slate-500">${i + 1}</td>
-                        <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
-                        <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
-                        ${subCells}
-                        <td class="p-2.5 font-bold text-emerald-600">${c.A || '-'}</td>
-                        <td class="p-2.5 font-bold text-blue-600">${c.B || '-'}</td>
-                        <td class="p-2.5 font-bold text-amber-600">${c.C || '-'}</td>
-                        <td class="p-2.5 font-bold text-orange-600">${c.S || '-'}</td>
-                        <td class="p-2.5 font-bold text-rose-600">${c.W || '-'}</td>
-                    </tr>`;
+            masterBody.innerHTML = renderGenderAwareRows(ranked, genderMode, subs.length + 9, (s, i) => {
+                const c = { A: 0, B: 0, C: 0, S: 0, W: 0 };
+                const gCode = getStudentGender(s.id);
+                const subCells = subs.map(sub => {
+                    const hl = (hlSub !== 'all' && sub === hlSub) ? 'subject-highlight-td' : '';
+                    const m = s.marks[sub];
+                    if (m === undefined) return `<td class="p-2.5 text-slate-400 ${hl}">-</td>`;
+                    const g = getGradeBadge(m);
+                    if (c[g] !== undefined) c[g]++;
+                    return `<td class="p-2 ${hl}"><span class="inline-block min-w-[26px] px-1.5 py-0.5 rounded-md text-xs font-bold badge-${g}">${g}</span></td>`;
                 }).join('');
-            }
+                return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="p-2.5 font-semibold text-slate-500">${i + 1}</td>
+                    <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
+                    <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
+                    <td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>
+                    ${subCells}
+                    <td class="p-2.5 font-bold text-emerald-600">${c.A || '-'}</td>
+                    <td class="p-2.5 font-bold text-blue-600">${c.B || '-'}</td>
+                    <td class="p-2.5 font-bold text-amber-600">${c.C || '-'}</td>
+                    <td class="p-2.5 font-bold text-orange-600">${c.S || '-'}</td>
+                    <td class="p-2.5 font-bold text-rose-600">${c.W || '-'}</td>
+                </tr>`;
+            });
         }
 
         // ============================================================
@@ -3967,17 +4597,25 @@
             if (!el || typeof html2pdf === 'undefined') return;
             stampPrintMetadata();
             el.classList.add('pdf-mode');
+            const prevMaxH = el.style.maxHeight;
+            const prevOverflow = el.style.overflow;
+            el.style.maxHeight = 'none';
+            el.style.overflow = 'visible';
             html2pdf().set({
-                margin: [0.35, 0.35, 0.35, 0.35],
+                margin: [0.3, 0.3, 0.3, 0.3],
                 filename,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
+                html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: Math.max(el.scrollWidth, 1120) },
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                pagebreak: { mode: ['css', 'legacy'] }
             }).from(el).save().then(() => {
                 el.classList.remove('pdf-mode');
+                el.style.maxHeight = prevMaxH;
+                el.style.overflow = prevOverflow;
             }).catch(() => {
                 el.classList.remove('pdf-mode');
+                el.style.maxHeight = prevMaxH;
+                el.style.overflow = prevOverflow;
             });
         }
 
@@ -4402,8 +5040,16 @@
                 }
 
                 const marks = JSON.parse(rec[8] || '{}');
+                const studentGender = displayGender(student[4]);
                 resDiv.innerHTML = `<div class="p-4 rounded-2xl border border-blue-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
-                    <h4 class="text-sm font-bold text-blue-700 dark:text-sky-400 mb-3">👤 ${escapeHtml(rec[1])} - ${escapeHtml(rec[3])} (${escapeHtml(displayTerm(rec[2]))})</h4>
+                    <div class="text-center border-b-2 border-slate-300 dark:border-slate-700 pb-2 mb-3">
+                        <div class="text-base font-extrabold text-slate-900 dark:text-white uppercase">${escapeHtml(schoolName || t('appTitle'))}</div>
+                        <div class="text-xs font-bold text-blue-700 dark:text-sky-400 mt-0.5">${escapeHtml(t('labelTerm'))}: ${escapeHtml(displayTerm(rec[2]))} &nbsp;|&nbsp; ${escapeHtml(t('labelGrade'))}: ${escapeHtml(rec[3])}</div>
+                    </div>
+                    <div class="flex flex-wrap justify-between gap-2 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">
+                        <span>👤 ${escapeHtml(rec[1])} (${escapeHtml(t('colAdmNo'))}: ${escapeHtml(rec[0])})</span>
+                        <span>${escapeHtml(t('gender'))}: ${escapeHtml(studentGender)}</span>
+                    </div>
                     <table class="w-full text-xs sm:text-sm text-center border-collapse">
                         <thead class="bg-slate-200/70 dark:bg-slate-800">
                             <tr>
@@ -4760,11 +5406,134 @@
                 await syncConfigToSheet();
             }
 
+            // Track inserted keys for one-click "Delete Last Bulk Upload"
+            const insertedKeys = rowsToInsert.map(r => {
+                if (type === 'grades') return translateCurriculumItem(getFieldCI(r, ['grade', 'class', 'class_id', 'classid', 'name']) || String(Object.values(r)[0] || '').trim(), currentLang);
+                if (type === 'students') return getFieldCI(r, ['admissionno', 'admission_no', 'adm_no', 'id']) || String(Object.values(r)[0] || '').trim();
+                if (type === 'teachers') return getFieldCI(r, ['id', 'teacherid', 'teacher_id']) || String(Object.values(r)[0] || '').trim();
+                return '';
+            }).filter(Boolean);
+            try {
+                localStorage.setItem(`sma_lastBulk_${type}`, JSON.stringify(insertedKeys));
+            } catch (e) {}
+
+            // Auto-delete any residual duplicates immediately
+            await autoRemoveDuplicates(false);
+            if (type === 'grades') {
+                refreshAllDynamicDropdowns();
+                renderMappingSubjects();
+                await syncConfigToSheet();
+            } else if (type === 'students') {
+                refreshAllDynamicDropdowns();
+                renderStudentsTable();
+                await syncStudentsToSheet();
+            } else if (type === 'teachers') {
+                refreshAllDynamicDropdowns();
+                renderTeachersTable();
+                await syncTeachersToSheet();
+            }
+
             updateKPIs();
             const msg = t('bulkSavedMsg')
                 .replace('{inserted}', rowsToInsert.length)
                 .replace('{skipped}', skippedCount);
             showBulkStatus(type, 'success', msg);
+            showToast(msg, 'success');
+        }
+
+        async function undoLastBulkUpload(type) {
+            if (currentTeacherSession) return;
+            let lastKeys = [];
+            try {
+                lastKeys = JSON.parse(localStorage.getItem(`sma_lastBulk_${type}`) || '[]');
+            } catch (e) { lastKeys = []; }
+            if (!Array.isArray(lastKeys) || lastKeys.length === 0) {
+                return showToast(t('bulkNoLastBatch'), 'warning');
+            }
+
+            const ok = await openModal({
+                title: t('bulkUndoConfirmTitle'),
+                message: t('bulkUndoConfirmMsg').replace('{count}', lastKeys.length),
+                confirmText: t('deleteBtn'),
+                confirmDanger: true
+            });
+            if (!ok) return;
+
+            const keySet = new Set(lastKeys.map(k => String(k).trim().toLowerCase()));
+            let deletedCount = 0;
+
+            if (type === 'grades') {
+                const before = grades.length;
+                grades = grades.filter(g => !keySet.has(String(g).trim().toLowerCase()));
+                Object.keys(gradeSubjects).forEach(g => {
+                    if (keySet.has(String(g).trim().toLowerCase())) delete gradeSubjects[g];
+                });
+                deletedCount = before - grades.length;
+                refreshAllDynamicDropdowns();
+                renderMappingSubjects();
+                await syncConfigToSheet();
+            } else if (type === 'students') {
+                const before = registeredStudents.length;
+                registeredStudents = registeredStudents.filter(s => !keySet.has(String(s.admissionNo).trim().toLowerCase()));
+                deletedCount = before - registeredStudents.length;
+                refreshAllDynamicDropdowns();
+                renderStudentsTable();
+                await syncStudentsToSheet();
+            } else if (type === 'teachers') {
+                const before = registeredTeachers.length;
+                registeredTeachers = registeredTeachers.filter(tc => !keySet.has(String(tc.id).trim().toLowerCase()));
+                deletedCount = before - registeredTeachers.length;
+                refreshAllDynamicDropdowns();
+                renderTeachersTable();
+                await syncTeachersToSheet();
+            }
+
+            localStorage.removeItem(`sma_lastBulk_${type}`);
+            updateKPIs();
+            updateTable();
+            updateAnalysisTables();
+            const msg = t('bulkDeletedCountMsg').replace('{count}', deletedCount);
+            showBulkStatus(type, 'warn', msg);
+            showToast(msg, 'success');
+        }
+
+        async function deleteAllBulkCategory(type) {
+            if (currentTeacherSession) return;
+            const totalCount = type === 'grades' ? grades.length : (type === 'students' ? registeredStudents.length : registeredTeachers.length);
+            if (totalCount === 0) return showToast(t('noDataFound'), 'warning');
+
+            const ok = await openModal({
+                title: t('bulkDeleteAllConfirmTitle'),
+                message: t('bulkDeleteAllConfirmMsg').replace('{count}', totalCount),
+                confirmText: t('deleteBtn'),
+                confirmDanger: true
+            });
+            if (!ok) return;
+
+            if (type === 'grades') {
+                grades = [];
+                gradeSubjects = {};
+                refreshAllDynamicDropdowns();
+                renderMappingSubjects();
+                await syncConfigToSheet();
+            } else if (type === 'students') {
+                registeredStudents = [];
+                refreshAllDynamicDropdowns();
+                renderStudentsTable();
+                await syncStudentsToSheet();
+            } else if (type === 'teachers') {
+                registeredTeachers = [];
+                refreshAllDynamicDropdowns();
+                renderTeachersTable();
+                await syncTeachersToSheet();
+            }
+
+            localStorage.removeItem(`sma_lastBulk_${type}`);
+            updateKPIs();
+            updateTable();
+            updateAnalysisTables();
+            const msg = t('bulkDeletedCountMsg').replace('{count}', totalCount);
+            showBulkStatus(type, 'warn', msg);
             showToast(msg, 'success');
         }
 
@@ -4862,6 +5631,8 @@
 
             document.getElementById(`btnBulkCheck_${type}`)?.addEventListener('click', () => checkBulkPreview(type));
             document.getElementById(`btnBulkSave_${type}`)?.addEventListener('click', () => saveBulkCategory(type));
+            document.getElementById(`btnBulkUndoLast_${type}`)?.addEventListener('click', () => undoLastBulkUpload(type));
+            document.getElementById(`btnBulkDeleteAll_${type}`)?.addEventListener('click', () => deleteAllBulkCategory(type));
         }
 
         // ============================================================
@@ -4975,11 +5746,15 @@
             document.getElementById('tableGradeSelect')?.addEventListener('change', () => updateTable(false));
             document.getElementById('filterSubject')?.addEventListener('change', () => updateTable(true));
             document.getElementById('filterCondition')?.addEventListener('change', () => updateTable(true));
+            document.getElementById('rankGenderGroup')?.addEventListener('change', () => updateTable(true));
             document.getElementById('btnResetRankFilters')?.addEventListener('click', () => {
                 document.getElementById('filterSubject').value = 'all';
                 document.getElementById('filterCondition').value = 'all';
+                const rg = document.getElementById('rankGenderGroup');
+                if (rg) rg.value = 'separate';
                 updateTable(false);
             });
+            document.getElementById('btnSyncNow')?.addEventListener('click', syncAllDataNow);
             document.getElementById('btnPrintRank')?.addEventListener('click', () => printSection('rank'));
             document.getElementById('btnPdfRank')?.addEventListener('click', () => {
                 const g = document.getElementById('tableGradeSelect').value || 'All';
@@ -4996,6 +5771,21 @@
             // Result Analyzing
             document.getElementById('analysisTermSelect')?.addEventListener('change', updateAnalysisTables);
             document.getElementById('analysisGradeSelect')?.addEventListener('change', updateAnalysisTables);
+            document.getElementById('analysisFilterSubject')?.addEventListener('change', updateAnalysisTables);
+            document.getElementById('analysisGenderGroup')?.addEventListener('change', updateAnalysisTables);
+            document.getElementById('analysisPassThreshold')?.addEventListener('change', updateAnalysisTables);
+            document.getElementById('toggleSatPassPercentOption')?.addEventListener('change', updateAnalysisTables);
+            document.getElementById('btnPrintFullAnalysis')?.addEventListener('click', () => printSection('analysis-full'));
+            document.getElementById('btnPdfFullAnalysis')?.addEventListener('click', () => {
+                const g = document.getElementById('analysisGradeSelect').value || 'All';
+                const tm = document.getElementById('analysisTermSelect').value || 'T1';
+                exportCardToPDF('analysisFullReportContainer', `Complete_Result_Analysis_${g}_${tm}.pdf`);
+            });
+            document.getElementById('btnPrintAnalysisStats')?.addEventListener('click', () => printSection('analysis-stats'));
+            document.getElementById('btnPdfAnalysisStats')?.addEventListener('click', () => {
+                const g = document.getElementById('analysisGradeSelect').value || 'All';
+                exportCardToPDF('analysisSubjectStatsCard', `Subject_Pass_Analysis_${g}.pdf`);
+            });
             document.getElementById('btnPrintAnalysisMarks')?.addEventListener('click', () => printSection('analysis-marks'));
             document.getElementById('btnPdfAnalysisMarks')?.addEventListener('click', () => {
                 const g = document.getElementById('analysisGradeSelect').value || 'All';
@@ -5080,6 +5870,18 @@
                     showToast(t('toastCopied'), 'info');
                 }
             });
+            document.getElementById('btnCopyTeacherLink')?.addEventListener('click', () => {
+                const box = document.getElementById('teacherPortalLinkBox');
+                if (!box || !box.value) return;
+                box.select();
+                box.setSelectionRange(0, 99999);
+                try {
+                    document.execCommand('copy');
+                    showToast(t('toastCopied'), 'success');
+                } catch {
+                    showToast(t('toastCopied'), 'info');
+                }
+            });
 
             // Bind Bulk Import sections (Grades, Students, Teachers)
             ['grades', 'students', 'teachers'].forEach(bindBulkSection);
@@ -5120,8 +5922,13 @@
                 loadPublicSchoolName(activePortalSheetId);
             }
             if (urlSheetId) {
+                localStorage.setItem('sma_linkedSheetId', urlSheetId);
                 document.getElementById('adminLoginBox').classList.add('hidden');
-                document.getElementById('studentSearchBox').classList.remove('hidden');
+                if (urlParams.get('mode') === 'teacher') {
+                    document.getElementById('teacherPortalBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('studentSearchBox').classList.remove('hidden');
+                }
             }
 
             // Initialize Google API Client
