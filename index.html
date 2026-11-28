@@ -147,8 +147,22 @@
             color: #93c5fd;
         }
 
+        @page landscapePage { size: A4 landscape; margin: 10mm 12mm; }
+        @page portraitPage { size: A4 portrait; margin: 10mm 12mm; }
+        .pdf-mode .analysis-card-body { display: block !important; }
+        .pdf-mode .collapse-chevron { display: none !important; }
+
         @media print {
             @page { size: A4 landscape; margin: 10mm 12mm; }
+            body[data-print-target="portal-result"] { page: portraitPage; }
+            body[data-print-target="portal-result"] #portalSearchResults { max-height: none !important; overflow: visible !important; }
+            body[data-print-target="analysis-marks"] #analysisMarksListCard .analysis-card-body,
+            body[data-print-target="analysis-stats"] #analysisSubjectStatsCard .analysis-card-body,
+            body[data-print-target="analysis-master"] #analysisMasterCard .analysis-card-body,
+            body[data-print-target="analysis-full"] #analysisFullReportContainer .analysis-card-body {
+                display: block !important;
+            }
+            .collapse-chevron { display: none !important; }
             html, body { background: #ffffff !important; color: #000000 !important; width: 100% !important; }
             #welcomeSplash, #loginScreen, #appHeader, #kpiSection, #tabNavBar, #syncStatusBadge, #toastContainer, #customModal, #securityLockOverlay, #pwaInstallBanner, .no-print, .dev-footer {
                 display: none !important;
@@ -607,13 +621,19 @@
                     <div id="rankGenderSummary" class="font-semibold text-blue-700 dark:text-sky-400"></div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 mb-4 no-print">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 mb-3 no-print">
                     <select id="tableTermSelect" class="term-select px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="tableGradeSelect" class="grade-select px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="filterSubject" class="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="filterCondition" class="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <select id="rankGenderGroup" class="gender-group-select px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs sm:text-sm outline-none"></select>
                     <button type="button" id="btnResetRankFilters" class="px-3 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs sm:text-sm font-bold transition" data-i18n="resetBtn">යළි සකසන්න</button>
+                </div>
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-2 no-print">
+                    <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" id="rankShowGenderCol" class="w-4 h-4 rounded accent-blue-600">
+                        <span data-i18n="showGenderColLabel">ගැහැණු / පිරිමි තීරුව Marksheet එකට එක් කරන්න</span>
+                    </label>
                 </div>
 
                 <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
@@ -667,11 +687,11 @@
         </div>
 
         <!-- ==================== TAB 2: RESULT ANALYZING ==================== -->
-        <div id="tab-analysis" class="tab-content hidden space-y-6">
+        <div id="tab-analysis" class="tab-content hidden space-y-5">
 
-            <!-- Shared Filter & Full Report Controls Bar -->
+            <!-- Shared Filter & Report Controls Bar -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3 no-print">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="selectTerm">වාරය</label>
                         <select id="analysisTermSelect" class="term-select w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
@@ -681,30 +701,23 @@
                         <select id="analysisGradeSelect" class="grade-select w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="filterHighlightSubjectLabel">විෂය Highlight</label>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="filterHighlightSubjectLabel">විෂය අනුව Highlight</label>
                         <select id="analysisFilterSubject" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-amber-500"></select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="genderViewLabel">ස්ත්‍රී/පුරුෂ පෙන්වීම</label>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="genderFilterLabel">ගැහැණු / පිරිමි Filter</label>
                         <select id="analysisGenderGroup" class="gender-group-select w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1" data-i18n="passThresholdLabel">සමත් සීමාව (40%+)</label>
-                        <select id="analysisPassThreshold" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none">
-                            <option value="gte40" selected>≥ 40% (40 හෝ වැඩි)</option>
-                            <option value="gt40">&gt; 40% (40 ට වැඩි)</option>
-                            <option value="gte35">≥ 35% (35 හෝ වැඩි)</option>
-                        </select>
                     </div>
                 </div>
 
-                <!-- Separate Pass % Option Toggle + Complete Report Print/PDF -->
-                <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                <!-- Optional Gender Column Toggle + Expand/Collapse + Complete Report Print/PDF -->
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5">
                     <div class="flex flex-wrap items-center gap-2">
-                        <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 cursor-pointer text-xs sm:text-sm font-bold text-indigo-700 dark:text-indigo-300">
-                            <input type="checkbox" id="toggleSatPassPercentOption" checked class="w-4 h-4 rounded accent-indigo-600">
-                            <span data-i18n="satPassPercentOptionLabel">පෙනී සිටි පිරිස හා සමත් ප්‍රතිශතය (40%+) පෙන්වන්න</span>
+                        <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-300">
+                            <input type="checkbox" id="analysisShowGenderCol" class="w-4 h-4 rounded accent-blue-600">
+                            <span data-i18n="showGenderColLabel">ගැහැණු / පිරිමි තීරුව Marksheet එකට එක් කරන්න</span>
                         </label>
+                        <button type="button" id="btnToggleAllAnalysis" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition" data-i18n="expandAllReportsBtn">📂 සියලු වාර්තා දිගහරින්න</button>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <button type="button" id="btnPrintFullAnalysis" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow-sm transition">🖨️ <span data-i18n="printFullResultBtn">සම්පූර්ණ ප්‍රතිඵලය මුද්‍රණය</span></button>
@@ -713,11 +726,11 @@
                 </div>
             </div>
 
-            <!-- Full Printable Analysis Report Wrapper -->
-            <div id="analysisFullReportContainer" class="space-y-6">
+            <!-- Full Printable Analysis Report Wrapper (All 3 Sheets Collapsed by Default) -->
+            <div id="analysisFullReportContainer" class="space-y-4">
 
-            <!-- Card 1 (ABOVE Master Marksheet): Student Marks & Rank List -->
-            <div id="analysisMarksListCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <!-- Sheet 1: Standard A4 Landscape Marks & Rank List -->
+            <div id="analysisMarksListCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="marksRankListTitle"></h4>
@@ -727,85 +740,95 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 no-print">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="marksRankListTitle">ශිෂ්‍ය ලකුණු සහ ස්ථාන ලේඛනය</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" id="btnPrintAnalysisMarks" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printMarksListBtn">ලකුණු ලේඛනය මුද්‍රණය</span></button>
-                        <button type="button" id="btnPdfAnalysisMarks" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
+                <!-- Collapsible Header Bar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 no-print">
+                    <button type="button" data-collapse-target="analysisMarksBodyWrap" class="collapse-toggle flex items-center gap-2.5 text-left flex-1 group">
+                        <span class="collapse-chevron inline-flex items-center justify-center w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-sky-300 text-xs font-extrabold transition">▶</span>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition" data-i18n="marksRankListTitle">ශිෂ්‍ය ලකුණු සහ ස්ථාන ලේඛනය</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="clickToExpandHint">බැලීමට මෙතැන ක්ලික් කර දිගහරින්න (A4 Landscape සම්මත ලේඛනය)</p>
+                        </div>
+                    </button>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <button type="button" id="btnPrintAnalysisMarks" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printMarksListBtn">ලකුණු ලේඛනය මුද්‍රණය</span></button>
+                        <button type="button" id="btnPdfAnalysisMarks" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
                     </div>
                 </div>
 
-                <div class="mb-3 p-2.5 rounded-xl bg-blue-50/80 dark:bg-slate-800/70 border border-blue-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
-                    <div class="font-bold text-slate-800 dark:text-sky-300">🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="analysisMarksVisibleMeta"></span></div>
-                    <div id="analysisMarksGenderSummary" class="font-semibold text-blue-700 dark:text-sky-400"></div>
-                </div>
-                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-                    <table class="w-full text-xs sm:text-sm text-center border-collapse">
-                        <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisMarksHeadRow"></tr></thead>
-                        <tbody id="analysisMarksBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
-                    </table>
-                </div>
-                <div class="print-footer hidden pt-6 text-xs">
-                    <div class="grid grid-cols-3 gap-8 text-center pt-4">
-                        <div>
-                            <div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div>
-                        </div>
-                        <div>
-                            <div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div>
-                        </div>
-                        <div>
-                            <div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div>
-                        </div>
+                <div id="analysisMarksBodyWrap" class="analysis-card-body hidden p-5">
+                    <div class="mb-3 p-2.5 rounded-xl bg-blue-50/80 dark:bg-slate-800/70 border border-blue-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
+                        <div class="font-bold text-slate-800 dark:text-sky-300">🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="analysisMarksVisibleMeta"></span></div>
+                        <div id="analysisMarksGenderSummary" class="font-semibold text-blue-700 dark:text-sky-400"></div>
                     </div>
-                    <div class="text-center text-[10px] text-slate-600 mt-3">
-                        School Marks Analyzer | SmartSoft Education Cloud
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                        <table class="w-full text-xs sm:text-sm text-center border-collapse">
+                            <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisMarksHeadRow"></tr></thead>
+                            <tbody id="analysisMarksBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                    <div class="print-footer hidden pt-6 text-xs">
+                        <div class="grid grid-cols-3 gap-8 text-center pt-4">
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div></div>
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div></div>
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div></div>
+                        </div>
+                        <div class="text-center text-[10px] text-slate-600 mt-3">School Marks Analyzer | SmartSoft Education Cloud</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 1B: Subject-wise 40%+ & Sat Pass Percentage Analysis -->
-            <div id="analysisSubjectStatsCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <!-- Sheet 2: Dedicated 40%+ & Sat Pass Percentage Analysis Sheet -->
+            <div id="analysisSubjectStatsCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
-                    <h4 class="text-sm font-bold mt-0.5" data-i18n="subjectAnalysisTitle">විෂය අනුව ප්‍රතිඵල විශ්ලේෂණය (40%+ සහ සමත් ප්‍රතිශතය)</h4>
+                    <h4 class="text-sm font-bold mt-0.5" data-i18n="subjectAnalysisTitle">විෂය අනුව ලකුණු 40+ සහ සමත් ප්‍රතිශත වාර්තාව</h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
                         <span id="printAnalysisStatsSubHeader"></span>
                         <span class="print-date-stamp"></span>
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 no-print">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="subjectAnalysisTitle">විෂය අනුව ප්‍රතිඵල විශ්ලේෂණය (40%+ සහ සමත් ප්‍රතිශතය)</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" id="btnPrintAnalysisStats" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printBtn">මුද්‍රණය</span></button>
-                        <button type="button" id="btnPdfAnalysisStats" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
+                <!-- Collapsible Header Bar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 bg-indigo-50/70 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 no-print">
+                    <button type="button" data-collapse-target="analysisStatsBodyWrap" class="collapse-toggle flex items-center gap-2.5 text-left flex-1 group">
+                        <span class="collapse-chevron inline-flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-xs font-extrabold transition">▶</span>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" data-i18n="subjectAnalysisTitle">විෂය අනුව ලකුණු 40+ සහ සමත් ප්‍රතිශත වාර්තාව (40%+ Sheet)</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="clickToExpandStatsHint">ලකුණු 40+ ගණන, පෙනී සිටි පිරිස සහ සමත් ප්‍රතිශතය බැලීමට ක්ලික් කරන්න</p>
+                        </div>
+                    </button>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <button type="button" id="btnPrintAnalysisStats" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printBtn">මුද්‍රණය</span></button>
+                        <button type="button" id="btnPdfAnalysisStats" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
                     </div>
                 </div>
 
-                <div class="mb-3 p-2.5 rounded-xl bg-indigo-50/80 dark:bg-slate-800/70 border border-indigo-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
-                    <div class="font-bold text-slate-800 dark:text-sky-300">🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="analysisStatsVisibleMeta"></span></div>
-                    <div id="analysisStatsOverallPills" class="font-bold text-indigo-700 dark:text-indigo-300"></div>
-                </div>
-
-                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-                    <table class="w-full text-xs sm:text-sm text-center border-collapse">
-                        <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisStatsHeadRow"></tr></thead>
-                        <tbody id="analysisStatsBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
-                    </table>
-                </div>
-
-                <div class="print-footer hidden pt-6 text-xs">
-                    <div class="grid grid-cols-3 gap-8 text-center pt-4">
-                        <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div></div>
-                        <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div></div>
-                        <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div></div>
+                <div id="analysisStatsBodyWrap" class="analysis-card-body hidden p-5">
+                    <div class="mb-3 p-2.5 rounded-xl bg-indigo-50/80 dark:bg-slate-800/70 border border-indigo-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm no-print">
+                        <div class="font-bold text-slate-800 dark:text-sky-300">🏫 <span class="dynamic-school-name"></span> &nbsp;|&nbsp; <span id="analysisStatsVisibleMeta"></span></div>
+                        <div id="analysisStatsOverallPills" class="font-bold text-indigo-700 dark:text-indigo-300"></div>
                     </div>
-                    <div class="text-center text-[10px] text-slate-600 mt-3">School Marks Analyzer | SmartSoft Education Cloud</div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                        <table class="w-full text-xs sm:text-sm text-center border-collapse">
+                            <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisStatsHeadRow"></tr></thead>
+                            <tbody id="analysisStatsBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="print-footer hidden pt-6 text-xs">
+                        <div class="grid grid-cols-3 gap-8 text-center pt-4">
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div></div>
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div></div>
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div></div>
+                        </div>
+                        <div class="text-center text-[10px] text-slate-600 mt-3">School Marks Analyzer | SmartSoft Education Cloud</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Card 2 (BELOW): Master Marksheet (A/B/C/S/W) -->
-            <div id="analysisMasterCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <!-- Sheet 3: Master Marksheet (A/B/C/S/W) -->
+            <div id="analysisMasterCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="masterMarksheetTitle"></h4>
@@ -815,34 +838,35 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 no-print">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" data-i18n="masterMarksheetTitle">ප්‍රධාන ප්‍රතිඵල ලේඛනය (Master Marksheet)</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" id="btnPrintAnalysisMaster" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printMasterSheetBtn">Master Sheet මුද්‍රණය</span></button>
-                        <button type="button" id="btnPdfAnalysisMaster" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
+                <!-- Collapsible Header Bar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 bg-emerald-50/70 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 no-print">
+                    <button type="button" data-collapse-target="analysisMasterBodyWrap" class="collapse-toggle flex items-center gap-2.5 text-left flex-1 group">
+                        <span class="collapse-chevron inline-flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-extrabold transition">▶</span>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition" data-i18n="masterMarksheetTitle">ප්‍රධාන ප්‍රතිඵල ලේඛනය (Master Marksheet)</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="clickToExpandMasterHint">A/B/C/S/W සාමාර්ථ වගුව බැලීමට ක්ලික් කරන්න</p>
+                        </div>
+                    </button>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <button type="button" id="btnPrintAnalysisMaster" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">🖨️ <span data-i18n="printMasterSheetBtn">Master Sheet මුද්‍රණය</span></button>
+                        <button type="button" id="btnPdfAnalysisMaster" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition">📄 <span data-i18n="pdfBtn">PDF බාගන්න</span></button>
                     </div>
                 </div>
 
-                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-                    <table class="w-full text-xs sm:text-sm text-center border-collapse">
-                        <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisMasterHeadRow"></tr></thead>
-                        <tbody id="analysisMasterBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
-                    </table>
-                </div>
-                <div class="print-footer hidden pt-6 text-xs">
-                    <div class="grid grid-cols-3 gap-8 text-center pt-4">
-                        <div>
-                            <div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div>
-                        </div>
-                        <div>
-                            <div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div>
-                        </div>
-                        <div>
-                            <div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div>
-                        </div>
+                <div id="analysisMasterBodyWrap" class="analysis-card-body hidden p-5">
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                        <table class="w-full text-xs sm:text-sm text-center border-collapse">
+                            <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-sky-300"><tr id="analysisMasterHeadRow"></tr></thead>
+                            <tbody id="analysisMasterBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+                        </table>
                     </div>
-                    <div class="text-center text-[10px] text-slate-600 mt-3">
-                        School Marks Analyzer | SmartSoft Education Cloud
+                    <div class="print-footer hidden pt-6 text-xs">
+                        <div class="grid grid-cols-3 gap-8 text-center pt-4">
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPreparedBy">සකස් කළේ (Prepared By)</div></div>
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigClassTeacher">පන්තිභාර ගුරු (Class Teacher)</div></div>
+                            <div><div class="border-t border-dotted border-black pt-1 font-semibold" data-i18n="sigPrincipal">විදුහල්පති (Principal)</div></div>
+                        </div>
+                        <div class="text-center text-[10px] text-slate-600 mt-3">School Marks Analyzer | SmartSoft Education Cloud</div>
                     </div>
                 </div>
             </div>
@@ -1765,6 +1789,29 @@
                 labelTerm: "වාරය",
                 labelGrade: "ශ්‍රේණිය",
                 syncSuccessToast: "දත්ත සාර්ථකව සමමුහුර්ත (Sync) කරන ලදී!",
+                genderFilterLabel: "ගැහැණු / පිරිමි Filter",
+                showGenderColLabel: "ගැහැණු / පිරිමි තීරුව Marksheet එකට එක් කරන්න",
+                expandAllReportsBtn: "📂 සියලු වාර්තා දිගහරින්න",
+                collapseAllReportsBtn: "📁 සියලු වාර්තා හකුලන්න",
+                clickToExpandHint: "බැලීමට මෙතැන ක්ලික් කර දිගහරින්න (A4 Landscape සම්මත ලේඛනය)",
+                clickToExpandStatsHint: "ලකුණු 40+ ගණන, පෙනී සිටි පිරිස සහ සමත් ප්‍රතිශතය බැලීමට ක්ලික් කරන්න",
+                clickToExpandMasterHint: "A/B/C/S/W සාමාර්ථ වගුව බැලීමට ක්ලික් කරන්න",
+                progressReportTitle: "ශිෂ්‍ය ප්‍රගති වාර්තාව (STUDENT PROGRESS REPORT)",
+                colClassAvg: "පන්ති සාමාන්‍යය",
+                colRemark: "මට්ටම / සටහන",
+                remExcellent: "විශිෂ්ටයි",
+                remVeryGood: "ඉතා හොඳයි",
+                remGood: "හොඳයි",
+                remSatisfactory: "සාමාන්‍යයි",
+                remNeedsWork: "වැඩිදියුණු කළ යුතුයි",
+                remAbsent: "නොපැමිණි",
+                subjectsSatLabel: "පෙනී සිටි විෂයයන්",
+                subjectsPassed40Label: "සමත් විෂයයන් (40+)",
+                teacherRemarksLine: "පන්තිභාර ගුරු සටහන:",
+                sigParent: "දෙමාපිය / භාරකරු අත්සන",
+                gradingKeyTitle: "සාමාර්ථ පරිමාණය: A (75-100) | B (65-74) | C (50-64) | S (35-49) | W (0-34) | AB (නොපැමිණි)",
+                classRankOfLabel: "පන්ති ස්ථානය",
+                academicYearLabel: "අධ්‍යයන වර්ෂය",
             }),
             en: Object.freeze({
                 appTitle: "School Marks Analyzer",
@@ -2028,6 +2075,29 @@
                 labelTerm: "Term",
                 labelGrade: "Grade",
                 syncSuccessToast: "Data synchronized successfully!",
+                genderFilterLabel: "Gender Filter",
+                showGenderColLabel: "Include Gender Column in Marksheet",
+                expandAllReportsBtn: "📂 Expand All Reports",
+                collapseAllReportsBtn: "📁 Collapse All Reports",
+                clickToExpandHint: "Click here to expand (Standard A4 Landscape Marksheet)",
+                clickToExpandStatsHint: "Click to view 40%+ count, sat students & pass percentage sheet",
+                clickToExpandMasterHint: "Click to view A/B/C/S/W Master Marksheet",
+                progressReportTitle: "STUDENT PROGRESS REPORT",
+                colClassAvg: "Class Avg",
+                colRemark: "Remark",
+                remExcellent: "Excellent",
+                remVeryGood: "Very Good",
+                remGood: "Good",
+                remSatisfactory: "Satisfactory",
+                remNeedsWork: "Needs Improvement",
+                remAbsent: "Absent",
+                subjectsSatLabel: "Subjects Sat",
+                subjectsPassed40Label: "Subjects Passed (40+)",
+                teacherRemarksLine: "Class Teacher's Remarks:",
+                sigParent: "Parent / Guardian Signature",
+                gradingKeyTitle: "Grading Scale: A (75-100) | B (65-74) | C (50-64) | S (35-49) | W (0-34) | AB (Absent)",
+                classRankOfLabel: "Class Rank",
+                academicYearLabel: "Academic Year",
             }),
             ta: Object.freeze({
                 appTitle: "பாடசாலை புள்ளிகள் பகுப்பாய்வு",
@@ -2291,6 +2361,29 @@
                 labelTerm: "தவணை",
                 labelGrade: "தரம்",
                 syncSuccessToast: "தரவுகள் வெற்றிகரமாக ஒத்திசைக்கப்பட்டன!",
+                genderFilterLabel: "ஆண் / பெண் வடிகட்டி",
+                showGenderColLabel: "பால்நிலை நிரலை Marksheet இல் சேர்",
+                expandAllReportsBtn: "📂 அனைத்தையும் விரிவாக்கு",
+                collapseAllReportsBtn: "📁 அனைத்தையும் சுருக்கு",
+                clickToExpandHint: "விரிவாக்க இங்கே கிளிக் செய்க (A4 Landscape தரநிலை)",
+                clickToExpandStatsHint: "40%+ எண்ணிக்கை, தோற்றியோர் & சித்தி % பார்க்க கிளிக் செய்க",
+                clickToExpandMasterHint: "A/B/C/S/W முதன்மைப் பட்டியலைப் பார்க்க கிளிக் செய்க",
+                progressReportTitle: "மாணவர் முன்னேற்ற அறிக்கை (STUDENT PROGRESS REPORT)",
+                colClassAvg: "வகுப்பு சராசரி",
+                colRemark: "குறிப்பு",
+                remExcellent: "மிகச்சிறப்பு",
+                remVeryGood: "மிக நன்று",
+                remGood: "நன்று",
+                remSatisfactory: "திருப்தி",
+                remNeedsWork: "மேம்படுத்த வேண்டும்",
+                remAbsent: "வரவில்லை",
+                subjectsSatLabel: "தோற்றிய பாடங்கள்",
+                subjectsPassed40Label: "சித்தி பாடங்கள் (40+)",
+                teacherRemarksLine: "வகுப்பாசிரியர் குறிப்பு:",
+                sigParent: "பெற்றோர் / பாதுகாவலர் கையொப்பம்",
+                gradingKeyTitle: "தர அளவுகோல்: A (75-100) | B (65-74) | C (50-64) | S (35-49) | W (0-34) | AB (வரவில்லை)",
+                classRankOfLabel: "வகுப்பு நிலை",
+                academicYearLabel: "கல்வியாண்டு",
             })
         });
 
@@ -2585,16 +2678,16 @@
                 cSel.value = prev;
             }
 
-            // 5. Gender Grouping Selects (Rank Board & Result Analyzing)
+            // 5. Gender Filter Selects (Default = 'combined' so standard marksheet has no gender labels unless filtered)
             document.querySelectorAll('.gender-group-select').forEach(sel => {
-                const prev = sel.value || 'separate';
+                const prev = sel.value || 'combined';
                 sel.innerHTML = `
-                    <option value="separate">${escapeHtml(t('genderSeparateOpt'))}</option>
                     <option value="combined">${escapeHtml(t('genderCombinedOpt'))}</option>
                     <option value="M">${escapeHtml(t('genderMaleOnlyOpt'))}</option>
                     <option value="F">${escapeHtml(t('genderFemaleOnlyOpt'))}</option>
+                    <option value="separate">${escapeHtml(t('genderSeparateOpt'))}</option>
                 `;
-                sel.value = ['separate', 'combined', 'M', 'F'].includes(prev) ? prev : 'separate';
+                sel.value = ['combined', 'M', 'F', 'separate'].includes(prev) ? prev : 'combined';
             });
         }
 
@@ -4160,7 +4253,8 @@
 
             const fSub = subSel.value;
             const fCond = document.getElementById('filterCondition').value || 'all';
-            const genderMode = document.getElementById('rankGenderGroup')?.value || 'separate';
+            const genderMode = document.getElementById('rankGenderGroup')?.value || 'combined';
+            const showGenderCol = Boolean(document.getElementById('rankShowGenderCol')?.checked);
 
             if (fSub !== 'all' && fCond !== 'all') {
                 data = data.filter(s => {
@@ -4183,15 +4277,15 @@
 
             headRow.innerHTML = `<th class="p-2.5">${escapeHtml(t('colSerial'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAdmNo'))}</th>
-                <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>
-                <th class="p-2.5">${escapeHtml(t('gender'))}</th>` +
+                <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>` +
+                (showGenderCol ? `<th class="p-2.5">${escapeHtml(t('gender'))}</th>` : '') +
                 subs.map(s => `<th class="p-2.5 ${fSub !== 'all' && s === fSub ? 'subject-highlight-th' : ''}">${escapeHtml(s)}</th>`).join('') +
                 `<th class="p-2.5">${escapeHtml(t('colTotal'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAverage'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colRank'))}</th>`;
 
             const reqCount = getSubjectsForGrade(grade).length;
-            const colCount = subs.length + 7;
+            const colCount = subs.length + (showGenderCol ? 7 : 6);
             tbody.innerHTML = renderGenderAwareRows(data, genderMode, colCount, (s, i) => {
                 const rText = (reqCount > 0 && Object.keys(s.marks || {}).length < reqCount) ? t('pendingRank') : s._rank;
                 const gCode = getStudentGender(s.id);
@@ -4199,7 +4293,7 @@
                     <td class="p-2.5 text-slate-500 font-semibold">${i + 1}</td>
                     <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
                     <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
-                    <td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>
+                    ${showGenderCol ? `<td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>` : ''}
                     ${subs.map(sub => {
                         const hl = (fSub !== 'all' && sub === fSub) ? 'subject-highlight-td' : '';
                         return `<td class="p-2.5 ${hl}">${s.marks[sub] !== undefined ? escapeHtml(s.marks[sub]) : '-'}</td>`;
@@ -4329,24 +4423,17 @@
         // ============================================================
         // 14. RESULT ANALYZING: MARKS & RANK LIST + MASTER MARKSHEET
         // ============================================================
-        function isPassingMark(mark, thresholdMode) {
+        function isPassingMark40(mark) {
             if (mark === 'AB' || mark === '' || mark === undefined || mark === null) return false;
             const n = parseFloat(mark);
-            if (isNaN(n)) return false;
-            if (thresholdMode === 'gt40') return n > 40;
-            if (thresholdMode === 'gte35') return n >= 35;
-            return n >= 40;
+            return !isNaN(n) && n >= 40;
         }
 
         function updateAnalysisTables() {
             const term = document.getElementById('analysisTermSelect')?.value || 'T1';
             const grade = document.getElementById('analysisGradeSelect')?.value;
-            const genderMode = document.getElementById('analysisGenderGroup')?.value || 'separate';
-            const thresholdMode = document.getElementById('analysisPassThreshold')?.value || 'gte40';
-            const showSatPass = document.getElementById('toggleSatPassPercentOption')?.checked !== false;
-
-            const statsCard = document.getElementById('analysisSubjectStatsCard');
-            if (statsCard) statsCard.classList.toggle('hidden', !showSatPass);
+            const genderMode = document.getElementById('analysisGenderGroup')?.value || 'combined';
+            const showGenderCol = Boolean(document.getElementById('analysisShowGenderCol')?.checked);
 
             const subText = `${t('labelTerm')}: ${displayTerm(term)}  |  ${t('labelGrade')}: ${grade || '-'}`;
             document.getElementById('printAnalysisMarksSubHeader').textContent = subText;
@@ -4402,26 +4489,27 @@
                 marksGenderSum.textContent = `${t('kpiStudents')}: ${ranked.length} | 👦 ${t('male')}: ${maleCnt} | 👧 ${t('female')}: ${femaleCnt}`;
             }
 
-            // --- Card 1: Student Marks & Rank List (with Gender separation & Subject Highlight) ---
+            // --- Sheet 1: Standard A4 Landscape Student Marks & Rank List ---
             marksHead.innerHTML = `
                 <th class="p-2.5">${escapeHtml(t('colSerial'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAdmNo'))}</th>
                 <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>
-                <th class="p-2.5">${escapeHtml(t('gender'))}</th>
+                ${showGenderCol ? `<th class="p-2.5">${escapeHtml(t('gender'))}</th>` : ''}
                 ${subs.map(s => `<th class="p-2.5 ${hlSub !== 'all' && s === hlSub ? 'subject-highlight-th' : ''}">${escapeHtml(s)}</th>`).join('')}
                 <th class="p-2.5">${escapeHtml(t('colTotal'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAverage'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colRank'))}</th>
             `;
 
-            marksBody.innerHTML = renderGenderAwareRows(ranked, genderMode, subs.length + 7, (s, i) => {
+            const marksColSpan = subs.length + (showGenderCol ? 7 : 6);
+            marksBody.innerHTML = renderGenderAwareRows(ranked, genderMode, marksColSpan, (s, i) => {
                 const rText = (reqCount > 0 && Object.keys(s.marks || {}).length < reqCount) ? t('pendingRank') : s._rank;
                 const gCode = getStudentGender(s.id);
                 return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td class="p-2.5 font-semibold text-slate-500">${i + 1}</td>
                     <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
                     <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
-                    <td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>
+                    ${showGenderCol ? `<td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>` : ''}
                     ${subs.map(sub => {
                         const hl = (hlSub !== 'all' && sub === hlSub) ? 'subject-highlight-td' : '';
                         return `<td class="p-2.5 ${hl}">${s.marks[sub] !== undefined ? escapeHtml(s.marks[sub]) : '-'}</td>`;
@@ -4432,9 +4520,8 @@
                 </tr>`;
             });
 
-            // --- Card 1B: Subject-wise 40%+ Count & Sat Pass % Analysis ---
+            // --- Sheet 2: Dedicated 40%+ Count & Sat Pass % Analysis Sheet ---
             if (statsHead && statsBody) {
-                const threshLabel = thresholdMode === 'gt40' ? '> 40%' : (thresholdMode === 'gte35' ? '≥ 35%' : '≥ 40%');
                 statsHead.innerHTML = `
                     <th class="p-2.5 text-left">${escapeHtml(t('colSubject'))}</th>
                     <th class="p-2.5">${escapeHtml(t('colRegistered'))}</th>
@@ -4445,28 +4532,30 @@
                     <th class="p-2.5">C</th>
                     <th class="p-2.5">S</th>
                     <th class="p-2.5">W</th>
-                    <th class="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">${escapeHtml(t('colOver40'))} (${threshLabel})</th>
+                    <th class="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">${escapeHtml(t('colOver40'))} (≥ 40%)</th>
                     <th class="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300">${escapeHtml(t('colPassPctSat'))}</th>
                     <th class="p-2.5">${escapeHtml(t('colSubAvg'))}</th>
                 `;
 
-                const gradeRegStudents = registeredStudents.filter(s => s.grade === grade);
-                const regCount = Math.max(gradeRegStudents.length, ranked.length);
+                const statsPool = genderMode === 'M'
+                    ? ranked.filter(s => getStudentGender(s.id) === 'M')
+                    : (genderMode === 'F' ? ranked.filter(s => getStudentGender(s.id) === 'F') : ranked);
+                const gradeRegStudents = registeredStudents.filter(s => s.grade === grade && (genderMode === 'M' ? normalizeGender(s.gender) === 'M' : (genderMode === 'F' ? normalizeGender(s.gender) === 'F' : true)));
+                const regCount = Math.max(gradeRegStudents.length, statsPool.length);
 
-                if (subs.length === 0 || ranked.length === 0) {
+                if (subs.length === 0 || statsPool.length === 0) {
                     if (overallPills) overallPills.textContent = '';
                     statsBody.innerHTML = `<tr><td colspan="12" class="p-6 text-slate-500">${escapeHtml(t('noDataFound'))}</td></tr>`;
                 } else {
                     let totSatAll = 0, totPassAll = 0, totAbAll = 0, sumAvgAll = 0, avgSubCount = 0;
 
                     const rowsHtml = subs.map(sub => {
-                        let sat = 0, satM = 0, satF = 0, ab = 0, pass40 = 0, passM = 0, passF = 0, sumMarks = 0;
+                        let sat = 0, ab = 0, pass40 = 0, sumMarks = 0;
                         const gc = { A: 0, B: 0, C: 0, S: 0, W: 0 };
 
-                        ranked.forEach(st => {
+                        statsPool.forEach(st => {
                             const rawM = st.marks ? st.marks[sub] : undefined;
                             if (rawM === undefined || rawM === '') return;
-                            const gen = getStudentGender(st.id);
                             if (String(rawM).toUpperCase() === 'AB') {
                                 ab++;
                                 return;
@@ -4474,17 +4563,11 @@
                             const num = parseFloat(rawM);
                             if (isNaN(num)) return;
                             sat++;
-                            if (gen === 'M') satM++;
-                            else if (gen === 'F') satF++;
                             sumMarks += num;
 
                             const gb = getGradeBadge(num);
                             if (gc[gb] !== undefined) gc[gb]++;
-                            if (isPassingMark(num, thresholdMode)) {
-                                pass40++;
-                                if (gen === 'M') passM++;
-                                else if (gen === 'F') passF++;
-                            }
+                            if (isPassingMark40(num)) pass40++;
                         });
 
                         const passPct = sat > 0 ? ((pass40 / sat) * 100).toFixed(1) : '0.0';
@@ -4504,14 +4587,14 @@
                         return `<tr class="${isHl ? 'subject-highlight-td' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}">
                             <td class="p-2.5 text-left font-bold ${isHl ? 'subject-highlight-td' : ''}">${escapeHtml(sub)}</td>
                             <td class="p-2.5 font-semibold">${regCount}</td>
-                            <td class="p-2.5 font-bold text-blue-700 dark:text-sky-400">${sat}<div class="text-[10px] font-medium text-slate-500">(${t('male')[0]}:${satM} / ${t('female')[0]}:${satF})</div></td>
+                            <td class="p-2.5 font-bold text-blue-700 dark:text-sky-400">${sat}</td>
                             <td class="p-2.5 font-semibold text-slate-500">${ab}</td>
                             <td class="p-2.5 font-bold text-emerald-600">${gc.A}</td>
                             <td class="p-2.5 font-bold text-blue-600">${gc.B}</td>
                             <td class="p-2.5 font-bold text-amber-600">${gc.C}</td>
                             <td class="p-2.5 font-bold text-orange-600">${gc.S}</td>
                             <td class="p-2.5 font-bold text-rose-600">${gc.W}</td>
-                            <td class="p-2.5 font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/20">${pass40}<div class="text-[10px] font-medium text-slate-500">(${t('male')[0]}:${passM} / ${t('female')[0]}:${passF})</div></td>
+                            <td class="p-2.5 font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/20">${pass40}</td>
                             <td class="p-2.5 bg-indigo-50/40 dark:bg-indigo-950/20"><span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-extrabold ${pctColor}">${passPct}%</span></td>
                             <td class="p-2.5 font-bold">${subAvg}</td>
                         </tr>`;
@@ -4521,7 +4604,7 @@
                     const overallAvg = avgSubCount > 0 ? (sumAvgAll / avgSubCount).toFixed(2) : '0.00';
 
                     if (overallPills) {
-                        overallPills.textContent = `${t('colSat')}: ${totSatAll} | ${t('colOver40')} (${threshLabel}): ${totPassAll} | ${t('colPassPctSat')}: ${overallPassPct}%`;
+                        overallPills.textContent = `${t('colSat')}: ${totSatAll} | ${t('colOver40')}: ${totPassAll} | ${t('colPassPctSat')}: ${overallPassPct}%`;
                     }
 
                     const summaryRow = `<tr class="bg-slate-100 dark:bg-slate-800 font-extrabold border-t-2 border-slate-300 dark:border-slate-700">
@@ -4539,17 +4622,18 @@
                 }
             }
 
-            // --- Card 2: Master Marksheet (A/B/C/S/W) ---
+            // --- Sheet 3: Master Marksheet (A/B/C/S/W) ---
             masterHead.innerHTML = `
                 <th class="p-2.5">${escapeHtml(t('colSerial'))}</th>
                 <th class="p-2.5">${escapeHtml(t('colAdmNo'))}</th>
                 <th class="p-2.5 text-left">${escapeHtml(t('colName'))}</th>
-                <th class="p-2.5">${escapeHtml(t('gender'))}</th>
+                ${showGenderCol ? `<th class="p-2.5">${escapeHtml(t('gender'))}</th>` : ''}
                 ${subs.map(s => `<th class="p-2.5 ${hlSub !== 'all' && s === hlSub ? 'subject-highlight-th' : ''}">${escapeHtml(s)}</th>`).join('')}
                 <th class="p-2.5">A</th><th class="p-2.5">B</th><th class="p-2.5">C</th><th class="p-2.5">S</th><th class="p-2.5">W</th>
             `;
 
-            masterBody.innerHTML = renderGenderAwareRows(ranked, genderMode, subs.length + 9, (s, i) => {
+            const masterColSpan = subs.length + (showGenderCol ? 9 : 8);
+            masterBody.innerHTML = renderGenderAwareRows(ranked, genderMode, masterColSpan, (s, i) => {
                 const c = { A: 0, B: 0, C: 0, S: 0, W: 0 };
                 const gCode = getStudentGender(s.id);
                 const subCells = subs.map(sub => {
@@ -4564,7 +4648,7 @@
                     <td class="p-2.5 font-semibold text-slate-500">${i + 1}</td>
                     <td class="p-2.5 font-semibold text-blue-600 dark:text-sky-400">${escapeHtml(s.id)}</td>
                     <td class="p-2.5 text-left font-semibold">${escapeHtml(s.name)}</td>
-                    <td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>
+                    ${showGenderCol ? `<td class="p-2.5 text-xs font-semibold">${escapeHtml(displayGender(gCode))}</td>` : ''}
                     ${subCells}
                     <td class="p-2.5 font-bold text-emerald-600">${c.A || '-'}</td>
                     <td class="p-2.5 font-bold text-blue-600">${c.B || '-'}</td>
@@ -4592,7 +4676,7 @@
             setTimeout(() => document.body.removeAttribute('data-print-target'), 300);
         }
 
-        function exportCardToPDF(cardId, filename) {
+        function exportCardToPDF(cardId, filename, orientation = 'landscape') {
             const el = document.getElementById(cardId);
             if (!el || typeof html2pdf === 'undefined') return;
             stampPrintMetadata();
@@ -4601,12 +4685,13 @@
             const prevOverflow = el.style.overflow;
             el.style.maxHeight = 'none';
             el.style.overflow = 'visible';
+            const targetWidth = orientation === 'portrait' ? 794 : Math.max(el.scrollWidth, 1120);
             html2pdf().set({
                 margin: [0.3, 0.3, 0.3, 0.3],
                 filename,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: Math.max(el.scrollWidth, 1120) },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' },
+                html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: targetWidth },
+                jsPDF: { unit: 'in', format: 'a4', orientation },
                 pagebreak: { mode: ['css', 'legacy'] }
             }).from(el).save().then(() => {
                 el.classList.remove('pdf-mode');
@@ -5040,43 +5125,153 @@
                 }
 
                 const marks = JSON.parse(rec[8] || '{}');
-                const studentGender = displayGender(student[4]);
-                resDiv.innerHTML = `<div class="p-4 rounded-2xl border border-blue-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
-                    <div class="text-center border-b-2 border-slate-300 dark:border-slate-700 pb-2 mb-3">
-                        <div class="text-base font-extrabold text-slate-900 dark:text-white uppercase">${escapeHtml(schoolName || t('appTitle'))}</div>
-                        <div class="text-xs font-bold text-blue-700 dark:text-sky-400 mt-0.5">${escapeHtml(t('labelTerm'))}: ${escapeHtml(displayTerm(rec[2]))} &nbsp;|&nbsp; ${escapeHtml(t('labelGrade'))}: ${escapeHtml(rec[3])}</div>
+                const studentGrade = String(rec[3] || student[3] || '').trim();
+                const fullName = student[1] || rec[1] || '';
+                const nameInitials = student[2] || rec[1] || '';
+                const currentYear = new Date().getFullYear();
+                const todayStr = new Date().toISOString().slice(0, 10);
+
+                // Compute true Class Rank & Class Subject Averages from all classmates in same Term & Grade
+                const classmates = mRows.filter(r =>
+                    String(r[0] || '').trim() !== '' &&
+                    normalizeTerm(r[2]) === term &&
+                    String(r[3] || '').trim().toLowerCase() === studentGrade.toLowerCase()
+                ).map(r => ({
+                    id: String(r[0] || '').trim().toLowerCase(),
+                    total: parseFloat(r[5]) || 0,
+                    marks: (() => { try { return JSON.parse(r[8] || '{}'); } catch { return {}; } })()
+                }));
+
+                classmates.sort((a, b) => b.total - a.total);
+                let studentRank = '-';
+                let rnk = 1, prevTot = null;
+                classmates.forEach((cm, idx) => {
+                    if (prevTot !== null && cm.total < prevTot) rnk = idx + 1;
+                    prevTot = cm.total;
+                    if (cm.id === id.toLowerCase()) studentRank = `${rnk} / ${classmates.length}`;
+                });
+
+                const getSubClassAvg = (subName) => {
+                    let sSum = 0, sCnt = 0;
+                    classmates.forEach(cm => {
+                        const mv = cm.marks[subName];
+                        if (mv !== undefined && mv !== '' && String(mv).toUpperCase() !== 'AB' && !isNaN(parseFloat(mv))) {
+                            sSum += parseFloat(mv);
+                            sCnt++;
+                        }
+                    });
+                    return sCnt > 0 ? (sSum / sCnt).toFixed(1) : '-';
+                };
+
+                const getGradeRemark = (g) => {
+                    if (g === 'A') return t('remExcellent');
+                    if (g === 'B') return t('remVeryGood');
+                    if (g === 'C') return t('remGood');
+                    if (g === 'S') return t('remSatisfactory');
+                    if (g === 'AB') return t('remAbsent');
+                    return t('remNeedsWork');
+                };
+
+                const entries = Object.entries(marks);
+                const gCounts = { A: 0, B: 0, C: 0, S: 0, W: 0 };
+                let satCount = 0, pass40Count = 0;
+                entries.forEach(([, v]) => {
+                    const g = getGradeBadge(v);
+                    if (gCounts[g] !== undefined) gCounts[g]++;
+                    if (String(v).toUpperCase() !== 'AB' && v !== '' && !isNaN(parseFloat(v))) {
+                        satCount++;
+                        if (parseFloat(v) >= 40) pass40Count++;
+                    }
+                });
+
+                resDiv.innerHTML = `<div id="studentProgressReportSheet" class="p-4 sm:p-5 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 space-y-3">
+                    <!-- Official Progress Report Header -->
+                    <div class="text-center border-b-2 border-slate-800 dark:border-slate-600 pb-2.5">
+                        <div class="text-base sm:text-lg font-extrabold uppercase tracking-wide text-slate-900 dark:text-white">${escapeHtml(schoolName || t('appTitle'))}</div>
+                        <div class="text-xs sm:text-sm font-extrabold text-blue-700 dark:text-sky-400 mt-0.5">${escapeHtml(t('progressReportTitle'))}</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 mt-1">
+                            ${escapeHtml(t('academicYearLabel'))}: ${currentYear} &nbsp;|&nbsp; ${escapeHtml(t('labelTerm'))}: ${escapeHtml(displayTerm(rec[2]))} &nbsp;|&nbsp; ${escapeHtml(t('labelGrade'))}: ${escapeHtml(studentGrade)}
+                        </div>
                     </div>
-                    <div class="flex flex-wrap justify-between gap-2 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">
-                        <span>👤 ${escapeHtml(rec[1])} (${escapeHtml(t('colAdmNo'))}: ${escapeHtml(rec[0])})</span>
-                        <span>${escapeHtml(t('gender'))}: ${escapeHtml(studentGender)}</span>
+
+                    <!-- Student Particulars Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-xs bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div><span class="font-semibold text-slate-500">${escapeHtml(t('fullName'))}:</span> <span class="font-bold">${escapeHtml(fullName)}</span></div>
+                        <div><span class="font-semibold text-slate-500">${escapeHtml(t('colAdmNo'))}:</span> <span class="font-bold text-blue-700 dark:text-sky-400">${escapeHtml(rec[0])}</span></div>
+                        <div><span class="font-semibold text-slate-500">${escapeHtml(t('nameInitials'))}:</span> <span class="font-bold">${escapeHtml(nameInitials)}</span></div>
+                        <div><span class="font-semibold text-slate-500">${escapeHtml(t('dob'))}:</span> <span class="font-bold">${escapeHtml(sheetDob)}</span></div>
+                        <div><span class="font-semibold text-slate-500">${escapeHtml(t('labelGrade'))}:</span> <span class="font-bold">${escapeHtml(studentGrade)}</span></div>
+                        <div><span class="font-semibold text-slate-500">${escapeHtml(t('classRankOfLabel'))}:</span> <span class="font-extrabold text-amber-600 dark:text-amber-400">${escapeHtml(studentRank)}</span></div>
                     </div>
-                    <table class="w-full text-xs sm:text-sm text-center border-collapse">
-                        <thead class="bg-slate-200/70 dark:bg-slate-800">
+
+                    <!-- Subjects & Marks Table -->
+                    <table class="w-full text-xs sm:text-sm text-center border-collapse border border-slate-300 dark:border-slate-700">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-sky-300">
                             <tr>
-                                <th class="p-2 text-left">${escapeHtml(t('colSubject'))}</th>
-                                <th class="p-2">${escapeHtml(t('colMarks'))}</th>
-                                <th class="p-2">${escapeHtml(t('colResultGrade'))}</th>
+                                <th class="p-2 border border-slate-300 dark:border-slate-700 w-10">${escapeHtml(t('colSerial'))}</th>
+                                <th class="p-2 border border-slate-300 dark:border-slate-700 text-left">${escapeHtml(t('colSubject'))}</th>
+                                <th class="p-2 border border-slate-300 dark:border-slate-700">${escapeHtml(t('colMarks'))}</th>
+                                <th class="p-2 border border-slate-300 dark:border-slate-700">${escapeHtml(t('colResultGrade'))}</th>
+                                <th class="p-2 border border-slate-300 dark:border-slate-700">${escapeHtml(t('colClassAvg'))}</th>
+                                <th class="p-2 border border-slate-300 dark:border-slate-700 text-left">${escapeHtml(t('colRemark'))}</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                            ${Object.entries(marks).map(([k, v]) => {
+                        <tbody>
+                            ${entries.map(([k, v], idx) => {
                                 const g = getGradeBadge(v);
-                                return `<tr>
-                                    <td class="p-2 text-left font-medium">${escapeHtml(k)}</td>
-                                    <td class="p-2 font-bold">${escapeHtml(v)}</td>
-                                    <td class="p-2"><span class="px-2 py-0.5 rounded-md text-xs font-bold badge-${g}">${g}</span></td>
+                                return `<tr class="odd:bg-white even:bg-slate-50/70 dark:odd:bg-slate-900 dark:even:bg-slate-800/40">
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700 font-semibold">${idx + 1}</td>
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700 text-left font-semibold">${escapeHtml(k)}</td>
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700 font-extrabold">${escapeHtml(v)}</td>
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700"><span class="inline-block min-w-[26px] px-1.5 py-0.5 rounded text-xs font-bold badge-${g}">${g}</span></td>
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400">${escapeHtml(getSubClassAvg(k))}</td>
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700 text-left text-xs">${escapeHtml(getGradeRemark(g))}</td>
                                 </tr>`;
                             }).join('')}
-                            <tr class="font-bold bg-slate-100 dark:bg-slate-800">
-                                <td class="p-2 text-left">${escapeHtml(t('colTotal'))}</td>
-                                <td class="p-2" colspan="2">${escapeHtml(rec[5])}</td>
-                            </tr>
-                            <tr class="font-bold bg-slate-100 dark:bg-slate-800">
-                                <td class="p-2 text-left">${escapeHtml(t('colAverage'))}</td>
-                                <td class="p-2" colspan="2">${Number(rec[6] || 0).toFixed(2)}</td>
-                            </tr>
                         </tbody>
                     </table>
+
+                    <!-- Overall Summary Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                        <div class="p-2 rounded-lg bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700">
+                            <div class="text-[10px] font-semibold text-slate-500">${escapeHtml(t('colTotal'))}</div>
+                            <div class="text-sm font-extrabold text-blue-700 dark:text-sky-400">${escapeHtml(rec[5])}</div>
+                        </div>
+                        <div class="p-2 rounded-lg bg-emerald-50 dark:bg-slate-800 border border-emerald-200 dark:border-slate-700">
+                            <div class="text-[10px] font-semibold text-slate-500">${escapeHtml(t('colAverage'))}</div>
+                            <div class="text-sm font-extrabold text-emerald-700 dark:text-emerald-400">${Number(rec[6] || 0).toFixed(2)}%</div>
+                        </div>
+                        <div class="p-2 rounded-lg bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700">
+                            <div class="text-[10px] font-semibold text-slate-500">${escapeHtml(t('classRankOfLabel'))}</div>
+                            <div class="text-sm font-extrabold text-amber-700 dark:text-amber-400">${escapeHtml(studentRank)}</div>
+                        </div>
+                        <div class="p-2 rounded-lg bg-indigo-50 dark:bg-slate-800 border border-indigo-200 dark:border-slate-700">
+                            <div class="text-[10px] font-semibold text-slate-500">${escapeHtml(t('subjectsPassed40Label'))}</div>
+                            <div class="text-sm font-extrabold text-indigo-700 dark:text-indigo-400">${pass40Count} / ${satCount}</div>
+                        </div>
+                    </div>
+
+                    <!-- Grade Counts & Scale Legend -->
+                    <div class="text-[11px] flex flex-wrap items-center justify-between gap-2 px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                        <div class="font-bold">A: ${gCounts.A} &nbsp;|&nbsp; B: ${gCounts.B} &nbsp;|&nbsp; C: ${gCounts.C} &nbsp;|&nbsp; S: ${gCounts.S} &nbsp;|&nbsp; W: ${gCounts.W}</div>
+                        <div class="text-slate-600 dark:text-slate-400">${escapeHtml(t('gradingKeyTitle'))}</div>
+                    </div>
+
+                    <!-- Class Teacher Remarks & Official Signatures -->
+                    <div class="pt-2 space-y-4 text-xs">
+                        <div class="border-b border-dotted border-slate-500 pb-4">
+                            <span class="font-bold">${escapeHtml(t('teacherRemarksLine'))}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-center pt-5">
+                            <div><div class="border-t border-dotted border-slate-700 dark:border-slate-400 pt-1 font-semibold">${escapeHtml(t('sigClassTeacher'))}</div></div>
+                            <div><div class="border-t border-dotted border-slate-700 dark:border-slate-400 pt-1 font-semibold">${escapeHtml(t('sigPrincipal'))}</div></div>
+                            <div><div class="border-t border-dotted border-slate-700 dark:border-slate-400 pt-1 font-semibold">${escapeHtml(t('sigParent'))}</div></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-500 pt-1">
+                            <span>${escapeHtml(t('printedOnLabel'))}: ${todayStr}</span>
+                            <span>School Marks Analyzer | SmartSoft</span>
+                        </div>
+                    </div>
                 </div>`;
             } catch (err) {
                 console.error('Portal fetch error:', err);
@@ -5692,7 +5887,7 @@
                     return showToast(t('noDataFound'), 'warning');
                 }
                 const adm = document.getElementById('portalSearchInput')?.value.trim() || 'Student';
-                exportCardToPDF('portalSearchResults', `Student_Result_${adm}.pdf`);
+                exportCardToPDF('portalSearchResults', `Progress_Report_${adm}.pdf`, 'portrait');
             });
 
             // Logout
@@ -5747,11 +5942,14 @@
             document.getElementById('filterSubject')?.addEventListener('change', () => updateTable(true));
             document.getElementById('filterCondition')?.addEventListener('change', () => updateTable(true));
             document.getElementById('rankGenderGroup')?.addEventListener('change', () => updateTable(true));
+            document.getElementById('rankShowGenderCol')?.addEventListener('change', () => updateTable(true));
             document.getElementById('btnResetRankFilters')?.addEventListener('click', () => {
                 document.getElementById('filterSubject').value = 'all';
                 document.getElementById('filterCondition').value = 'all';
                 const rg = document.getElementById('rankGenderGroup');
-                if (rg) rg.value = 'separate';
+                if (rg) rg.value = 'combined';
+                const gc = document.getElementById('rankShowGenderCol');
+                if (gc) gc.checked = false;
                 updateTable(false);
             });
             document.getElementById('btnSyncNow')?.addEventListener('click', syncAllDataNow);
@@ -5773,8 +5971,29 @@
             document.getElementById('analysisGradeSelect')?.addEventListener('change', updateAnalysisTables);
             document.getElementById('analysisFilterSubject')?.addEventListener('change', updateAnalysisTables);
             document.getElementById('analysisGenderGroup')?.addEventListener('change', updateAnalysisTables);
-            document.getElementById('analysisPassThreshold')?.addEventListener('change', updateAnalysisTables);
-            document.getElementById('toggleSatPassPercentOption')?.addEventListener('change', updateAnalysisTables);
+            document.getElementById('analysisShowGenderCol')?.addEventListener('change', updateAnalysisTables);
+
+            // Collapsible Analysis Sheets (All collapsed by default; expand only when needed)
+            document.querySelectorAll('.collapse-toggle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.dataset.collapseTarget;
+                    const body = document.getElementById(targetId);
+                    const chevron = btn.querySelector('.collapse-chevron');
+                    if (!body) return;
+                    const isHidden = body.classList.toggle('hidden');
+                    if (chevron) chevron.textContent = isHidden ? '▶' : '▼';
+                });
+            });
+
+            document.getElementById('btnToggleAllAnalysis')?.addEventListener('click', (e) => {
+                const bodies = Array.from(document.querySelectorAll('#analysisFullReportContainer .analysis-card-body'));
+                const anyCollapsed = bodies.some(b => b.classList.contains('hidden'));
+                bodies.forEach(b => b.classList.toggle('hidden', !anyCollapsed));
+                document.querySelectorAll('#analysisFullReportContainer .collapse-chevron').forEach(ch => {
+                    ch.textContent = anyCollapsed ? '▼' : '▶';
+                });
+                e.currentTarget.textContent = anyCollapsed ? t('collapseAllReportsBtn') : t('expandAllReportsBtn');
+            });
             document.getElementById('btnPrintFullAnalysis')?.addEventListener('click', () => printSection('analysis-full'));
             document.getElementById('btnPdfFullAnalysis')?.addEventListener('click', () => {
                 const g = document.getElementById('analysisGradeSelect').value || 'All';
