@@ -153,11 +153,78 @@
         @page portraitPage { size: A4 portrait; margin: 10mm 12mm; }
         .pdf-mode .analysis-card-body { display: block !important; }
         .pdf-mode .collapse-chevron { display: none !important; }
+        .pdf-mode.pdf-portrait-center {
+            width: 710px !important;
+            max-width: 710px !important;
+            margin: 0 auto !important;
+            padding: 10px 14px !important;
+            box-sizing: border-box !important;
+        }
+        .pdf-mode.pdf-portrait-center #studentProgressReportSheet {
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 14px 16px !important;
+            border: 1.5px solid #1e293b !important;
+            border-radius: 6px !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        .pdf-mode.pdf-portrait-center table {
+            font-size: 10px !important;
+        }
+        .pdf-mode.pdf-portrait-center th,
+        .pdf-mode.pdf-portrait-center td {
+            padding: 4px 5px !important;
+        }
 
         @media print {
             @page { size: A4 landscape; margin: 10mm 12mm; }
-            body[data-print-target="portal-result"] { page: portraitPage; }
-            body[data-print-target="portal-result"] #portalSearchResults { max-height: none !important; overflow: visible !important; }
+            body[data-print-target="portal-result"] {
+                page: portraitPage;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            body[data-print-target="portal-result"] #loginScreen {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+            }
+            body[data-print-target="portal-result"] #studentSearchBox {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 auto !important;
+                border: none !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+            }
+            body[data-print-target="portal-result"] #portalSearchResults {
+                max-height: none !important;
+                overflow: visible !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            body[data-print-target="portal-result"] #studentProgressReportSheet {
+                width: 100% !important;
+                max-width: 186mm !important;
+                margin: 0 auto !important;
+                padding: 8mm 9mm !important;
+                border: 1.5px solid #000000 !important;
+                border-radius: 0 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                font-size: 10.5px !important;
+            }
+            body[data-print-target="portal-result"] #studentProgressReportSheet table {
+                font-size: 10px !important;
+                margin-top: 4px !important;
+            }
+            body[data-print-target="portal-result"] #studentProgressReportSheet th,
+            body[data-print-target="portal-result"] #studentProgressReportSheet td {
+                padding: 3.5px 5px !important;
+            }
             body[data-print-target="analysis-marks"] #analysisMarksListCard .analysis-card-body,
             body[data-print-target="analysis-stats"] #analysisSubjectStatsCard .analysis-card-body,
             body[data-print-target="analysis-master"] #analysisMasterCard .analysis-card-body,
@@ -5050,24 +5117,26 @@
             if (!el || typeof html2pdf === 'undefined') return;
             stampPrintMetadata();
             el.classList.add('pdf-mode');
+            if (orientation === 'portrait') el.classList.add('pdf-portrait-center');
             const prevMaxH = el.style.maxHeight;
             const prevOverflow = el.style.overflow;
             el.style.maxHeight = 'none';
             el.style.overflow = 'visible';
-            const targetWidth = orientation === 'portrait' ? 794 : Math.max(el.scrollWidth, 1120);
+            const targetWidth = orientation === 'portrait' ? 710 : Math.max(el.scrollWidth, 1120);
+            const pdfMargin = orientation === 'portrait' ? [0.35, 0.43, 0.35, 0.43] : [0.3, 0.3, 0.3, 0.3];
             html2pdf().set({
-                margin: [0.3, 0.3, 0.3, 0.3],
+                margin: pdfMargin,
                 filename,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: targetWidth },
                 jsPDF: { unit: 'in', format: 'a4', orientation },
                 pagebreak: { mode: ['css', 'legacy'] }
             }).from(el).save().then(() => {
-                el.classList.remove('pdf-mode');
+                el.classList.remove('pdf-mode', 'pdf-portrait-center');
                 el.style.maxHeight = prevMaxH;
                 el.style.overflow = prevOverflow;
             }).catch(() => {
-                el.classList.remove('pdf-mode');
+                el.classList.remove('pdf-mode', 'pdf-portrait-center');
                 el.style.maxHeight = prevMaxH;
                 el.style.overflow = prevOverflow;
             });
@@ -5591,11 +5660,12 @@
                         <tbody>
                             ${entries.map(([k, v], idx) => {
                                 const g = getGradeBadge(v);
+                                const displayGrade = (g === 'AB' || String(v).trim().toUpperCase() === 'AB') ? '-' : g;
                                 return `<tr class="odd:bg-white even:bg-slate-50/70 dark:odd:bg-slate-900 dark:even:bg-slate-800/40">
                                     <td class="p-2 border border-slate-300 dark:border-slate-700 font-semibold">${idx + 1}</td>
                                     <td class="p-2 border border-slate-300 dark:border-slate-700 text-left font-semibold">${escapeHtml(k)}</td>
                                     <td class="p-2 border border-slate-300 dark:border-slate-700 font-extrabold">${escapeHtml(v)}</td>
-                                    <td class="p-2 border border-slate-300 dark:border-slate-700"><span class="inline-block min-w-[26px] px-1.5 py-0.5 rounded text-xs font-bold badge-${g}">${g}</span></td>
+                                    <td class="p-2 border border-slate-300 dark:border-slate-700 font-bold">${escapeHtml(displayGrade)}</td>
                                     <td class="p-2 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400">${escapeHtml(getSubClassAvg(k))}</td>
                                     <td class="p-2 border border-slate-300 dark:border-slate-700 text-left text-xs">${escapeHtml(getGradeRemark(g))}</td>
                                 </tr>`;
