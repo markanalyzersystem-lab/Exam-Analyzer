@@ -102,6 +102,8 @@
         .pdf-mode * { color: #000000 !important; box-shadow: none !important; }
         .pdf-mode .no-print, .pdf-mode .hide-in-pdf { display: none !important; }
         .pdf-mode .print-header, .pdf-mode .print-footer { display: block !important; }
+        .print-school-logo { height: 48px; width: 48px; object-fit: contain; margin: 0 auto 4px auto; }
+        .pdf-mode .print-school-logo { height: 46px !important; width: 46px !important; object-fit: contain !important; margin: 0 auto 4px auto !important; }
         .pdf-mode table { width: 100% !important; border-collapse: collapse !important; font-size: 10.5px !important; margin-top: 6px !important; }
         .pdf-mode thead th { background: #e2e8f0 !important; font-weight: 700 !important; border: 1px solid #1e293b !important; padding: 6px 5px !important; }
         .pdf-mode td { border: 1px solid #334155 !important; background: #ffffff !important; padding: 5px 5px !important; }
@@ -400,8 +402,16 @@
             <!-- School Name & Google Email Inputs -->
             <div class="space-y-2.5">
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="schoolNameLabel">පාසලේ නම</label>
-                    <input type="text" id="loginSchoolName" data-i18n-placeholder="schoolNamePlaceholder" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="schoolNameAndLogoLabel">පාසලේ නම සහ ලාංඡනය (Logo)</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="loginSchoolName" data-i18n-placeholder="schoolNamePlaceholder" class="flex-1 min-w-0 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                        <input type="file" id="loginSchoolLogoInput" accept="image/*" class="hidden">
+                        <button type="button" id="btnLoginSchoolLogo" class="shrink-0 h-[38px] px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition" title="Upload School Logo">
+                            <img id="loginLogoPreview" class="hidden w-6 h-6 rounded-md object-contain bg-white p-0.5" alt="Logo">
+                            <span id="loginLogoIcon">🖼️</span>
+                            <span data-i18n="addLogoBtn">Logo</span>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1" data-i18n="googleEmailLabel">Google විද්‍යුත් තැපෑල</label>
@@ -516,7 +526,10 @@
                 <button type="button" id="themeTogglePortal" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-base">🌙</button>
             </div>
 
-            <h2 class="dynamic-school-name text-lg sm:text-xl font-extrabold text-center text-blue-600 dark:text-sky-400 mb-3" data-i18n="studentResultsPortal">ශිෂ්‍ය ප්‍රතිඵල බලන්න</h2>
+            <div class="flex flex-col items-center justify-center mb-3">
+                <img class="dynamic-school-logo hidden w-12 h-12 rounded-xl object-contain bg-white p-1 border border-slate-200 dark:border-slate-700 shadow-sm mb-1.5" alt="School Logo">
+                <h2 class="dynamic-school-name text-lg sm:text-xl font-extrabold text-center text-blue-600 dark:text-sky-400" data-i18n="studentResultsPortal">ශිෂ්‍ය ප්‍රතිඵල බලන්න</h2>
+            </div>
 
             <div class="space-y-2.5">
 <input type="hidden" id="portalSheetIdInput">
@@ -561,8 +574,9 @@
             <div class="pointer-events-none absolute -top-12 -right-12 w-56 h-56 rounded-full bg-sky-400/15 blur-2xl"></div>
             <div class="relative flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div class="w-11 h-11 rounded-2xl bg-white p-1.5 shrink-0 shadow-md ring-2 ring-sky-400/40">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" class="w-full h-full">
+                    <div class="w-11 h-11 rounded-2xl bg-white p-1 shrink-0 shadow-md ring-2 ring-sky-400/40 flex items-center justify-center overflow-hidden">
+                        <img id="headerSchoolLogoImg" class="dynamic-school-logo hidden w-full h-full object-contain" alt="School Logo">
+                        <svg id="headerDefaultSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" class="w-full h-full p-0.5">
                             <rect x="64" y="24" width="92" height="172" rx="20" fill="none" stroke="#0b2b6b" stroke-width="12"/>
                             <path d="M153 64 C126 43 81 46 64 70 C52 87 64 108 95 112 L125 117 C148 120 158 133 148 149 C133 170 86 172 59 152 L78 134 C97 148 123 148 130 137 C134 130 126 124 112 122 L86 118 C53 112 40 89 54 66 C73 37 125 34 156 56 Z" fill="#0284c7"/>
                         </svg>
@@ -714,6 +728,7 @@
             <!-- Rank Board Card -->
             <div id="reportCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <img class="dynamic-school-logo print-school-logo hidden" alt="School Logo">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="rankBoardTitle"></h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
@@ -869,6 +884,7 @@
             <!-- Sheet 1: Standard A4 Landscape Marks & Rank List -->
             <div id="analysisMarksListCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <img class="dynamic-school-logo print-school-logo hidden" alt="School Logo">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="marksRankListTitle"></h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
@@ -917,6 +933,7 @@
             <!-- Sheet 2: Dedicated 40%+ & Sat Pass Percentage Analysis Sheet -->
             <div id="analysisSubjectStatsCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <img class="dynamic-school-logo print-school-logo hidden" alt="School Logo">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="subjectAnalysisTitle">විෂය අනුව ලකුණු 40+ සහ සමත් ප්‍රතිශත වාර්තාව</h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
@@ -967,6 +984,7 @@
             <!-- Sheet 3: Master Marksheet (A/B/C/S/W) -->
             <div id="analysisMasterCard" class="card-printable pdf-page-break bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <img class="dynamic-school-logo print-school-logo hidden" alt="School Logo">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="masterMarksheetTitle"></h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
@@ -1204,6 +1222,7 @@
 
             <div id="studentsListCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <img class="dynamic-school-logo print-school-logo hidden" alt="School Logo">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="studentsListTitle"></h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
@@ -1380,6 +1399,7 @@
 
             <div id="teachersListCard" class="card-printable bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
                 <div class="print-header hidden text-center border-b-2 border-slate-900 pb-2.5 mb-3">
+                    <img class="dynamic-school-logo print-school-logo hidden" alt="School Logo">
                     <h2 class="dynamic-school-name text-lg font-extrabold uppercase tracking-wide"></h2>
                     <h4 class="text-sm font-bold mt-0.5" data-i18n="teachersListTitle"></h4>
                     <div class="flex justify-between items-center text-[11px] font-semibold mt-1.5 px-1">
@@ -1453,6 +1473,25 @@
                     <div class="flex flex-col sm:flex-row gap-2.5">
                         <input type="text" id="settingSchoolName" data-i18n-placeholder="schoolNamePlaceholder" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
                         <button type="button" id="btnSaveSchoolName" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition" data-i18n="saveNameBtn">නම සුරකින්න</button>
+                    </div>
+                </div>
+
+                <!-- School Logo Upload & Preview -->
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2" data-i18n="schoolLogoLabel">පාසල් ලාංඡනය (School Logo)</label>
+                    <div class="flex flex-col sm:flex-row items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                            <img id="settingLogoPreview" class="dynamic-school-logo hidden w-full h-full object-contain bg-white p-1" alt="School Logo">
+                            <span id="settingLogoPlaceholder" class="text-2xl text-slate-400">🏫</span>
+                        </div>
+                        <div class="flex-1 text-center sm:text-left space-y-2">
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="schoolLogoDesc">පාසලේ ලාංඡනය (PNG / JPG) එක් කළ විට පද්ධතියේ ඉහළින් සහ සියලුම මුද්‍රණ / PDF වාර්තාවල ස්වයංක්‍රීයව දිස්වේ.</p>
+                            <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                                <input type="file" id="settingSchoolLogoInput" accept="image/*" class="hidden">
+                                <button type="button" id="btnUploadSchoolLogo" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition">🖼️ <span data-i18n="uploadLogoBtn">Logo එක් කරන්න</span></button>
+                                <button type="button" id="btnRemoveSchoolLogo" class="hidden px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition">🗑️ <span data-i18n="removeLogoBtn">Logo ඉවත් කරන්න</span></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1953,6 +1992,15 @@
                 execPassRateLabel: "සමස්ත 40%+ සමත් %",
                 execTopPerformerLabel: "ප්‍රථම ස්ථානය (Top 1)",
                 execEvaluatedLabel: "ඇගයූ සිසුන්",
+                schoolNameAndLogoLabel: "පාසලේ නම සහ ලාංඡනය (Logo)",
+                addLogoBtn: "Logo",
+                schoolLogoLabel: "පාසල් ලාංඡනය (School Logo)",
+                schoolLogoDesc: "පාසලේ ලාංඡනය (PNG / JPG) එක් කළ විට පද්ධතියේ ඉහළින් සහ සියලුම මුද්‍රණ / PDF වාර්තාවල ස්වයංක්‍රීයව දිස්වේ.",
+                uploadLogoBtn: "Logo එක් කරන්න",
+                removeLogoBtn: "Logo ඉවත් කරන්න",
+                toastLogoUpdated: "පාසල් ලාංඡනය සාර්ථකව සුරකින ලදී!",
+                toastLogoRemoved: "පාසල් ලාංඡනය ඉවත් කරන ලදී.",
+                toastLogoInvalid: "කරුණාකර වලංගු පින්තූර ගොනුවක් (PNG/JPG) තෝරන්න.",
             }),
             en: Object.freeze({
                 appTitle: "School Marks Analyzer",
@@ -2243,6 +2291,15 @@
                 execPassRateLabel: "Overall 40%+ Pass %",
                 execTopPerformerLabel: "Top Performer (#1)",
                 execEvaluatedLabel: "Students Evaluated",
+                schoolNameAndLogoLabel: "School Name & Logo",
+                addLogoBtn: "Logo",
+                schoolLogoLabel: "School Logo / Crest",
+                schoolLogoDesc: "Upload your school logo (PNG / JPG). It automatically appears in the header and all Print / PDF reports.",
+                uploadLogoBtn: "Upload Logo",
+                removeLogoBtn: "Remove Logo",
+                toastLogoUpdated: "School logo saved successfully!",
+                toastLogoRemoved: "School logo removed.",
+                toastLogoInvalid: "Please select a valid image file (PNG/JPG).",
             }),
             ta: Object.freeze({
                 appTitle: "பாடசாலை புள்ளிகள் பகுப்பாய்வு",
@@ -2533,6 +2590,15 @@
                 execPassRateLabel: "மொத்த 40%+ சித்தி %",
                 execTopPerformerLabel: "முதலிடம் (Top 1)",
                 execEvaluatedLabel: "மதிப்பிடப்பட்ட மாணவர்கள்",
+                schoolNameAndLogoLabel: "பாடசாலையின் பெயர் & சின்னம் (Logo)",
+                addLogoBtn: "Logo",
+                schoolLogoLabel: "பாடசாலை சின்னம் (School Logo)",
+                schoolLogoDesc: "பாடசாலை சின்னத்தை (PNG / JPG) பதிவேற்றினால் தலைப்பு மற்றும் அனைத்து அச்சு / PDF அறிக்கைகளிலும் தானாகத் தோன்றும்.",
+                uploadLogoBtn: "Logo சேர்க்கவும்",
+                removeLogoBtn: "Logo நீக்கவும்",
+                toastLogoUpdated: "பாடசாலை சின்னம் வெற்றிகரமாகச் சேமிக்கப்பட்டது!",
+                toastLogoRemoved: "பாடசாலை சின்னம் நீக்கப்பட்டது.",
+                toastLogoInvalid: "சரியான படக் கோப்பை (PNG/JPG) தேர்ந்தெடுக்கவும்.",
             })
         });
 
@@ -2552,6 +2618,7 @@
         let currentSyncColor = '#10b981';
 
         let schoolName = localStorage.getItem('sma_schoolName') || '';
+        let schoolLogo = localStorage.getItem('sma_schoolLogo') || '';
         let grades = [];
         let subjects = [];
         let gradeSubjects = {};
@@ -2752,6 +2819,114 @@
             if (sInput && document.activeElement !== sInput) sInput.value = schoolName;
             const lInput = document.getElementById('loginSchoolName');
             if (lInput && !lInput.value && schoolName) lInput.value = schoolName;
+        }
+
+        function updateSchoolLogoUI(logoDataUrl) {
+            schoolLogo = (logoDataUrl || '').trim();
+            try {
+                if (schoolLogo) localStorage.setItem('sma_schoolLogo', schoolLogo);
+                else localStorage.removeItem('sma_schoolLogo');
+            } catch (e) {}
+
+            const hasLogo = Boolean(schoolLogo && schoolLogo.startsWith('data:image/'));
+            document.querySelectorAll('.dynamic-school-logo').forEach(img => {
+                if (hasLogo) {
+                    img.src = schoolLogo;
+                    img.classList.remove('hidden');
+                } else {
+                    img.removeAttribute('src');
+                    img.classList.add('hidden');
+                }
+            });
+
+            const headerSvg = document.getElementById('headerDefaultSvg');
+            if (headerSvg) headerSvg.classList.toggle('hidden', hasLogo);
+
+            const settingPh = document.getElementById('settingLogoPlaceholder');
+            if (settingPh) settingPh.classList.toggle('hidden', hasLogo);
+
+            const btnRem = document.getElementById('btnRemoveSchoolLogo');
+            if (btnRem) btnRem.classList.toggle('hidden', !hasLogo);
+
+            const loginPrev = document.getElementById('loginLogoPreview');
+            const loginIcon = document.getElementById('loginLogoIcon');
+            if (loginPrev && loginIcon) {
+                if (hasLogo) {
+                    loginPrev.src = schoolLogo;
+                    loginPrev.classList.remove('hidden');
+                    loginIcon.classList.add('hidden');
+                } else {
+                    loginPrev.removeAttribute('src');
+                    loginPrev.classList.add('hidden');
+                    loginIcon.classList.remove('hidden');
+                }
+            }
+        }
+
+        function compressLogoFile(file) {
+            return new Promise((resolve, reject) => {
+                if (!file || !file.type || !file.type.startsWith('image/')) {
+                    return reject(new Error(t('toastLogoInvalid')));
+                }
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error(t('toastLogoInvalid')));
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error(t('toastLogoInvalid')));
+                    img.onload = () => {
+                        const maxDim = 150;
+                        let w = img.width || maxDim;
+                        let h = img.height || maxDim;
+                        if (w > maxDim || h > maxDim) {
+                            const ratio = Math.min(maxDim / w, maxDim / h);
+                            w = Math.max(1, Math.round(w * ratio));
+                            h = Math.max(1, Math.round(h * ratio));
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, w, h);
+                        ctx.drawImage(img, 0, 0, w, h);
+
+                        // Prefer transparent PNG if under Google Sheets cell limit (45k chars), else JPEG
+                        let dataUrl = canvas.toDataURL('image/png');
+                        if (dataUrl.length > 42000) {
+                            const jCanvas = document.createElement('canvas');
+                            jCanvas.width = w;
+                            jCanvas.height = h;
+                            const jCtx = jCanvas.getContext('2d');
+                            jCtx.fillStyle = '#ffffff';
+                            jCtx.fillRect(0, 0, w, h);
+                            jCtx.drawImage(img, 0, 0, w, h);
+                            dataUrl = jCanvas.toDataURL('image/jpeg', 0.82);
+                        }
+                        resolve(dataUrl);
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function syncSettingsToSheet() {
+            const rows = [['schoolName', schoolName || t('appTitle')]];
+            if (schoolLogo) rows.push(['schoolLogo', schoolLogo]);
+            await syncSheetTab('Settings', ['Key', 'Value'], rows);
+        }
+
+        async function handleSchoolLogoSelected(file, syncNow = false) {
+            if (!file) return;
+            try {
+                const compressed = await compressLogoFile(file);
+                updateSchoolLogoUI(compressed);
+                if (syncNow && !currentTeacherSession && spreadsheetId && accessToken) {
+                    await syncSettingsToSheet();
+                }
+                showToast(t('toastLogoUpdated'), 'success');
+            } catch (err) {
+                showToast(err.message || t('toastLogoInvalid'), 'error');
+            }
         }
 
         function populateStaticSelectsPreservingState() {
@@ -3292,7 +3467,7 @@
                         resource: {
                             valueInputOption: 'RAW',
                             data: [
-                                { range: 'Settings!A1:B2', values: [['Key', 'Value'], ['schoolName', initName]] },
+                                { range: 'Settings!A1:B3', values: [['Key', 'Value'], ['schoolName', initName], ['schoolLogo', schoolLogo || '']] },
                                 { range: 'Config!A1:B4', values: [['Key', 'Value'], ['grades', '[]'], ['subjects', '[]'], ['gradeSubjects', '{}']] },
                                 { range: 'Students!A1:I1', values: [['admissionNo', 'fullName', 'nameInitials', 'grade', 'gender', 'dob', 'scholarship', 'address', 'phone']] },
                                 { range: 'Teachers!A1:L1', values: [['id', 'name', 'nic', 'address', 'qualifications', 'salaryNo', 'appointDate', 'schoolAppointDate', 'timetableDate', 'phone', 'classTeacher', 'subjects']] },
@@ -3304,11 +3479,20 @@
 
                 await loadAllDataFromSheet();
 
-                // Save entered school name if user typed a new one on login
+                // Save entered school name / uploaded logo if user set them on login
                 const typedSchool = document.getElementById('loginSchoolName').value.trim();
+                let needSettingsSync = false;
                 if (typedSchool && typedSchool !== schoolName) {
                     updateSchoolNameUI(typedSchool);
-                    await syncSheetTab('Settings', ['Key', 'Value'], [['schoolName', typedSchool]]);
+                    needSettingsSync = true;
+                }
+                if (window._pendingLoginLogo && window._pendingLoginLogo !== schoolLogo) {
+                    updateSchoolLogoUI(window._pendingLoginLogo);
+                    window._pendingLoginLogo = null;
+                    needSettingsSync = true;
+                }
+                if (needSettingsSync) {
+                    await syncSettingsToSheet();
                 }
 
                 localStorage.setItem('sma_linkedSheetId', spreadsheetId);
@@ -3387,6 +3571,8 @@
             const settingsRows = ranges[0]?.values || [];
             const nameRow = settingsRows.find(r => r[0] === 'schoolName');
             if (nameRow && nameRow[1]) updateSchoolNameUI(nameRow[1]);
+            const logoRow = settingsRows.find(r => r[0] === 'schoolLogo');
+            if (logoRow && logoRow[1]) updateSchoolLogoUI(logoRow[1]);
 
             // Config (Grades, Subjects, GradeSubjects) — stays completely empty if not set
             const cfgRows = ranges[1]?.values || [];
@@ -3566,6 +3752,8 @@
 
             const nameRow = (bundle.settings || []).find(r => r[0] === 'schoolName');
             if (nameRow && nameRow[1]) updateSchoolNameUI(nameRow[1]);
+            const logoRow = (bundle.settings || []).find(r => r[0] === 'schoolLogo');
+            if (logoRow && logoRow[1]) updateSchoolLogoUI(logoRow[1]);
 
             const cfgRows = bundle.config || [];
             const getCfg = (k, fallback) => {
@@ -4471,6 +4659,7 @@
                 const gCode = getStudentGender(r.id);
                 return `<div class="p-4 rounded-xl border border-blue-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                     <div class="text-center border-b border-slate-300 dark:border-slate-700 pb-2 mb-3">
+                        ${schoolLogo ? `<img src="${schoolLogo}" class="w-11 h-11 object-contain mx-auto mb-1" alt="School Logo">` : ''}
                         <div class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white uppercase">${escapeHtml(schoolName || t('appTitle'))}</div>
                         <div class="text-xs font-bold text-blue-700 dark:text-sky-400 mt-0.5">${escapeHtml(t('labelTerm'))}: ${escapeHtml(displayTerm(r.term))} &nbsp;|&nbsp; ${escapeHtml(t('labelGrade'))}: ${escapeHtml(r.grade)}</div>
                     </div>
@@ -5245,6 +5434,8 @@
                 const rows = await fetchPublicSheet(sheetId, 'Settings');
                 const row = rows.find(r => r[0] === 'schoolName');
                 if (row && row[1]) updateSchoolNameUI(row[1]);
+                const logoRow = rows.find(r => r[0] === 'schoolLogo');
+                if (logoRow && logoRow[1]) updateSchoolLogoUI(logoRow[1]);
             } catch (e) {}
         }
 
@@ -5367,6 +5558,7 @@
                 resDiv.innerHTML = `<div id="studentProgressReportSheet" class="p-4 sm:p-5 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 space-y-3">
                     <!-- Official Progress Report Header -->
                     <div class="text-center border-b-2 border-slate-800 dark:border-slate-600 pb-2.5">
+                        ${schoolLogo ? `<img src="${schoolLogo}" class="w-14 h-14 object-contain mx-auto mb-1.5" alt="School Logo">` : ''}
                         <div class="text-base sm:text-lg font-extrabold uppercase tracking-wide text-slate-900 dark:text-white">${escapeHtml(schoolName || t('appTitle'))}</div>
                         <div class="text-xs sm:text-sm font-extrabold text-blue-700 dark:text-sky-400 mt-0.5">${escapeHtml(t('progressReportTitle'))}</div>
                         <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 mt-1">
@@ -6245,13 +6437,46 @@
                 document.getElementById('teacherSubjectList').classList.toggle('hidden');
             });
 
-            // Settings
+            // School Logo Upload on Login Screen
+            document.getElementById('btnLoginSchoolLogo')?.addEventListener('click', () => {
+                document.getElementById('loginSchoolLogoInput')?.click();
+            });
+            document.getElementById('loginSchoolLogoInput')?.addEventListener('change', async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                    const compressed = await compressLogoFile(file);
+                    window._pendingLoginLogo = compressed;
+                    updateSchoolLogoUI(compressed);
+                    showToast(t('toastLogoUpdated'), 'success');
+                } catch (err) {
+                    showToast(err.message || t('toastLogoInvalid'), 'error');
+                }
+                e.target.value = '';
+            });
+
+            // Settings: School Name & School Logo
             document.getElementById('btnSaveSchoolName')?.addEventListener('click', async () => {
                 const val = document.getElementById('settingSchoolName').value.trim();
                 if (!val) return showToast(t('toastEnterSchool'), 'warning');
                 updateSchoolNameUI(val);
-                await syncSheetTab('Settings', ['Key', 'Value'], [['schoolName', val]]);
+                await syncSettingsToSheet();
                 showToast(t('toastSaved'), 'success');
+            });
+            document.getElementById('btnUploadSchoolLogo')?.addEventListener('click', () => {
+                document.getElementById('settingSchoolLogoInput')?.click();
+            });
+            document.getElementById('settingSchoolLogoInput')?.addEventListener('change', async (e) => {
+                const file = e.target.files?.[0];
+                if (file) await handleSchoolLogoSelected(file, true);
+                e.target.value = '';
+            });
+            document.getElementById('btnRemoveSchoolLogo')?.addEventListener('click', async () => {
+                updateSchoolLogoUI('');
+                if (!currentTeacherSession && spreadsheetId && accessToken) {
+                    await syncSettingsToSheet();
+                }
+                showToast(t('toastLogoRemoved'), 'info');
             });
             document.getElementById('btnOpenGoogleSheet')?.addEventListener('click', () => {
                 if (currentTeacherSession) return;
@@ -6299,6 +6524,7 @@
         window.addEventListener('load', () => {
             applyTheme(currentTheme);
             bindEvents();
+            updateSchoolLogoUI(schoolLogo);
             setLanguage(currentLang);
             openTab('marks');
 
